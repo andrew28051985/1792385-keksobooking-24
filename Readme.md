@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг»
 
 * Студент: [Андрей Крисанов](https://up.htmlacademy.ru/javascript/24/user/1792385).
-* Наставник: `Неизвестно`.
+* Наставник: [Владислав Кривокора] (https://htmlacademy.ru/profile/krivokora).
 
 ---
 
