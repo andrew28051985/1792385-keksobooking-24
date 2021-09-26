@@ -14,7 +14,7 @@ const randomInt = function (from, to) {
   console.log('Результат: '+ resultInt);
 };
 // eslint-disable-next-line no-console
-randomInt(1, 10);
+randomInt(40, 420);
 
 const randomFloat = function (from, to, range) {
   if (from < 0 || to < 0) {
@@ -27,16 +27,11 @@ const randomFloat = function (from, to, range) {
     console.log('Предупреждение: для разнообразия результата выберайте разные значения минимального и максимального диапазона. Сейчас результат будет: ' + from);
     return console.log('Результат: '+ from);
   }
-
   const convertNumber = Math.pow(10, range); //10 возводим в степень range
-  const numberOne = from * convertNumber;
-  const numberTwo = to * convertNumber;
-  const result1 = Math.floor((Math.random() * ((numberTwo - numberOne + 1) + numberOne))/convertNumber);
-
-  return console.log(numberOne + ' ' + result1);
-
-  //const result = (Math.random() * (to - from + 1) + from).toFixed(range);
-  //console.log('Результат: '+ result);
+  const One = (from * convertNumber).toFixed(0);
+  const Two = (to * convertNumber).toFixed(0);
+  const result = (Math.floor(Math.random() * (Two - One + 1) + +One))/convertNumber;
+  return console.log('Результат: '+ result);
 };
 
-randomFloat(40.11122, 41.22222, 5);
+randomFloat(4.12, 4.92, 2);
