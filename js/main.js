@@ -14,7 +14,7 @@ const randomInt = function (from, to) {
   console.log('Результат: '+ resultInt);
 };
 // eslint-disable-next-line no-console
-randomInt(25, 40);
+randomInt(1, 10);
 
 const randomFloat = function (from, to, range) {
   if (from < 0 || to < 0) {
