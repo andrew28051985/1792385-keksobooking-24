@@ -44,6 +44,11 @@ const FEATURES = [
   'elevator',
   'conditioner',
 ];
+const PHOTOS = [
+  'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/duonguyen-8LrGtIxxa4w.jpg',
+  'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
+  'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
+];
 
 const createAutor = () => {
   let numberAutor = getRandomPositiveInt(1, MAX_NUMBER_AUTOR);
@@ -66,8 +71,19 @@ const createLocation = () => {
   };
 };
 
+const createMass = () => {
+  const NEW_FEATURES = FEATURES.slice(getRandomPositiveInt(0, 5));
+  return NEW_FEATURES;
+};
+
+const createPhotos = () => {
+  const NEW_PHOTOS = PHOTOS.slice(getRandomPositiveInt(0, 2));
+  return NEW_PHOTOS;
+};
+
 const createOffer = () => {
   const TITLE = 'Внимание! Супер предложение!';
+  const DESCRIPTION = 'Просторная комната, светлая, удобная!';
   return {
     title: TITLE,
     // eslint-disable-next-line prefer-template
@@ -78,7 +94,9 @@ const createOffer = () => {
     guests: getRandomPositiveInt(MIN_GUEST, MAX_GUEST),
     checkin: CHECK_IN_OUT[getRandomPositiveInt(0, CHECK_IN_OUT.length-1)],
     checkout: CHECK_IN_OUT[getRandomPositiveInt(0, CHECK_IN_OUT.length-1)],
-    features: FEATURES.length-getRandomPositiveInt(0, FEATURES.length-1),
+    features: createMass(),
+    description: DESCRIPTION,
+    photos: createPhotos(),
   };
 };
 const createAds = () => {
