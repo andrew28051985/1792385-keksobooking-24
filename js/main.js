@@ -72,12 +72,12 @@ const createLocation = () => {
 };
 
 const createMass = () => {
-  const NEW_FEATURES = FEATURES.slice(getRandomPositiveInt(0, 5));
+  const NEW_FEATURES = FEATURES.slice(getRandomPositiveInt(0, FEATURES.length-1));
   return NEW_FEATURES;
 };
 
 const createPhotos = () => {
-  const NEW_PHOTOS = PHOTOS.slice(getRandomPositiveInt(0, 2));
+  const NEW_PHOTOS = PHOTOS.slice(getRandomPositiveInt(0, PHOTOS.length-1));
   return NEW_PHOTOS;
 };
 
