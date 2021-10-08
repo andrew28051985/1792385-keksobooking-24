@@ -71,13 +71,33 @@ const createLocation = () => {
   };
 };
 
-const createMass = () => {
-  const NEW_FEATURES = FEATURES.slice(getRandomPositiveInt(0, FEATURES.length-1));
+const createFeatures = () => {
+  const NEW_FEATURES = [];
+  let count = 0;
+  FEATURES.forEach((value, index) => {
+    if (getRandomPositiveInt(0, 1) === 1) {
+      NEW_FEATURES.push(FEATURES[index]);
+      count += count;
+    }
+  });
+  if (count === 0) {
+    NEW_FEATURES.push(FEATURES[count]);
+  }
   return NEW_FEATURES;
 };
 
 const createPhotos = () => {
-  const NEW_PHOTOS = PHOTOS.slice(getRandomPositiveInt(0, PHOTOS.length-1));
+  const NEW_PHOTOS = [];
+  let count = 0;
+  PHOTOS.forEach((value, index) => {
+    if (getRandomPositiveInt(0, 1) === 1) {
+      NEW_PHOTOS.push(PHOTOS[index]);
+      count = count + 1;
+    }
+  });
+  if (count === 0) {
+    NEW_PHOTOS.push(PHOTOS[count]);
+  }
   return NEW_PHOTOS;
 };
 
@@ -94,7 +114,7 @@ const createOffer = () => {
     guests: getRandomPositiveInt(MIN_GUEST, MAX_GUEST),
     checkin: CHECK_IN_OUT[getRandomPositiveInt(0, CHECK_IN_OUT.length-1)],
     checkout: CHECK_IN_OUT[getRandomPositiveInt(0, CHECK_IN_OUT.length-1)],
-    features: createMass(),
+    features: createFeatures(),
     description: DESCRIPTION,
     photos: createPhotos(),
   };
@@ -114,3 +134,4 @@ const similarAds = Array.from({length: SIMILAR_ADS_COUNT}, createAds);
 console.log(createAds);
 // eslint-disable-next-line no-console
 console.log(similarAds);
+
