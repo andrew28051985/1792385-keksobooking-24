@@ -73,30 +73,26 @@ const createLocation = () => {
 
 const createFeatures = () => {
   const NEW_FEATURES = [];
-  let count = 0;
   FEATURES.forEach((value, index) => {
     if (getRandomPositiveInt(0, 1) === 1) {
       NEW_FEATURES.push(FEATURES[index]);
-      count += count;
     }
   });
-  if (count === 0) {
-    NEW_FEATURES.push(FEATURES[count]);
+  if (NEW_FEATURES.length === 0) {
+    NEW_FEATURES.push(FEATURES[0]);
   }
   return NEW_FEATURES;
 };
 
 const createPhotos = () => {
   const NEW_PHOTOS = [];
-  let count = 0;
   PHOTOS.forEach((value, index) => {
     if (getRandomPositiveInt(0, 1) === 1) {
       NEW_PHOTOS.push(PHOTOS[index]);
-      count = count + 1;
     }
   });
-  if (count === 0) {
-    NEW_PHOTOS.push(PHOTOS[count]);
+  if (NEW_PHOTOS.length === 0) {
+    NEW_PHOTOS.push(PHOTOS[0]);
   }
   return NEW_PHOTOS;
 };
@@ -130,8 +126,6 @@ const createAds = () => {
 
 const similarAds = Array.from({length: SIMILAR_ADS_COUNT}, createAds);
 
-// eslint-disable-next-line no-console
-console.log(createAds);
 // eslint-disable-next-line no-console
 console.log(similarAds);
 
