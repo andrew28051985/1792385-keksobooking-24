@@ -64,8 +64,7 @@ const createOffer = () => {
   const DESCRIPTION = 'Просторная комната, светлая, удобная!';
   return {
     title: TITLE,
-    // eslint-disable-next-line prefer-template
-    address: createLocation().lat + ', ' + createLocation().lng,
+    address: `${createLocation().lat,  createLocation().lng}`,
     price: getRandomPositiveInt(MIN_PRICE, MAX_PRICE),
     type: TYPE[getRandomPositiveInt(0, TYPE.length - 1)],
     rooms: getRandomPositiveInt(MIN_ROOMS, MAX_ROOMS),
