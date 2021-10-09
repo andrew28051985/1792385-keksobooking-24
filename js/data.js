@@ -1,6 +1,11 @@
-import {getRandomPositiveInt} from './random-number.js';
-import {createLocation} from './data-location.js';
+import {getRandomPositiveInt, getRandomPositiveFloat} from './random-number.js';
 
+const MAX_NUMBER_AUTOR = 10;
+const MIN_LAT = 35.65000;
+const MAX_LAT = 35.70000;
+const MIN_LNG = 139.70000;
+const MAX_LNG = 139.80000;
+const RANGE_FLOAT = 5;
 const MIN_PRICE = 1000;
 const MAX_PRICE = 100000;
 const MIN_ROOMS = 1;
@@ -33,30 +38,36 @@ const PHOTOS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-const createFeatures = () => {
-  const NEW_FEATURES = [];
-  FEATURES.forEach((value, index) => {
-    if (getRandomPositiveInt(0, 1) === 1) {
-      NEW_FEATURES.push(FEATURES[index]);
-    }
-  });
-  if (NEW_FEATURES.length === 0) {
-    NEW_FEATURES.push(FEATURES[0]);
+const createAutor = () => {
+  let numberAutor = getRandomPositiveInt(1, MAX_NUMBER_AUTOR);
+  if (String(numberAutor).length === 1) {
+    numberAutor = `0${numberAutor}`;
   }
-  return NEW_FEATURES;
+  return {
+    avatar: `img/avatars/user${numberAutor}.png`,
+  };
 };
 
-const createPhotos = () => {
-  const NEW_PHOTOS = [];
-  PHOTOS.forEach((value, index) => {
+const createLocation = () => {
+  const NUMBER_LAT = getRandomPositiveFloat(MIN_LAT, MAX_LAT, RANGE_FLOAT);
+  const NUMBER_LNG = getRandomPositiveFloat(MIN_LNG, MAX_LNG, RANGE_FLOAT);
+  return {
+    lat: NUMBER_LAT,
+    lng: NUMBER_LNG,
+  };
+};
+
+const createArray = (newArray) => {
+  const ARRAY_TEMP = [];
+  newArray.forEach((value, index) => {
     if (getRandomPositiveInt(0, 1) === 1) {
-      NEW_PHOTOS.push(PHOTOS[index]);
+      ARRAY_TEMP.push(newArray[index]);
     }
   });
-  if (NEW_PHOTOS.length === 0) {
-    NEW_PHOTOS.push(PHOTOS[0]);
+  if (ARRAY_TEMP.length === 0) {
+    ARRAY_TEMP.push(newArray[0]);
   }
-  return NEW_PHOTOS;
+  return ARRAY_TEMP;
 };
 
 const createOffer = () => {
@@ -71,10 +82,10 @@ const createOffer = () => {
     guests: getRandomPositiveInt(MIN_GUEST, MAX_GUEST),
     checkin: CHECK_IN_OUT[getRandomPositiveInt(0, CHECK_IN_OUT.length-1)],
     checkout: CHECK_IN_OUT[getRandomPositiveInt(0, CHECK_IN_OUT.length-1)],
-    features: createFeatures(),
+    features: createArray(FEATURES),
     description: DESCRIPTION,
-    photos: createPhotos(),
+    photos: createArray(PHOTOS),
   };
 };
 
-export {createOffer};
+export {createAutor, createLocation, createOffer};

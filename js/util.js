@@ -1,6 +1,4 @@
-import {createAutor} from './data-autor.js';
-import {createLocation} from './data-location.js';
-import {createOffer} from './data-offer.js';
+import {createAutor, createLocation, createOffer} from './data.js';
 
 const createAds = () => {
   const AUTOR = createAutor();
