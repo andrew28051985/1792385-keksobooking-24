@@ -12,6 +12,8 @@ const MIN_ROOMS = 1;
 const MAX_ROOMS = 10;
 const MIN_GUEST = 1;
 const MAX_GUEST = 20;
+const TITLE = 'Внимание! Супер предложение!';
+const DESCRIPTION = 'Просторная комната, светлая, удобная!';
 const TYPE = [
   'palace',
   'flat',
@@ -71,9 +73,8 @@ const createArray = (newArray) => {
 };
 
 const createOffer = () => {
-  const TITLE = 'Внимание! Супер предложение!';
-  const DESCRIPTION = 'Просторная комната, светлая, удобная!';
-  return {
+
+  const offer = {
     title: TITLE,
     address: `${createLocation().lat,  createLocation().lng}`,
     price: getRandomPositiveInt(MIN_PRICE, MAX_PRICE),
@@ -86,6 +87,8 @@ const createOffer = () => {
     description: DESCRIPTION,
     photos: createArray(PHOTOS),
   };
+
+  return offer;
 };
 
 export {createAutor, createLocation, createOffer};
