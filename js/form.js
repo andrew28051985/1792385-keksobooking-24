@@ -131,4 +131,41 @@ timeOut.addEventListener('input', () => {
   }
 });
 
+const roomNumber = formAd.querySelector('#room_number');
+const capacity = formAd.querySelector('#capacity');
+const capacityAll = capacity.querySelectorAll('option');
+capacityAll[2].selected = true;
+roomNumber.addEventListener('input', () => {
+  if (roomNumber.value === '1') {
+    capacity.value = 1;
+    capacityAll.forEach((option) => {
+      option.disabled = true;
+    });
+    capacityAll[2].disabled = false;
+  } else if (roomNumber.value === '2') {
+    capacity.value = 1;
+    capacityAll.forEach((option) => {
+      option.disabled = true;
+    });
+    capacityAll[2].disabled = false;
+    capacityAll[1].disabled = false;
+  } else if (roomNumber.value === '3') {
+    capacity.value = 1;
+    capacityAll.forEach((option) => {
+      option.disabled = false;
+    });
+    capacityAll[3].disabled = true;
+  } else if (roomNumber.value === '100') {
+    capacity.value = 0;
+    capacityAll.forEach((option) => {
+      option.disabled = true;
+    });
+    capacityAll[3].disabled = false;
+  }
+});
+
+const address = formAd.querySelector('#address');
+address.value = '35.6895, 139.692';
+address.setAttribute('readonly', true);
+
 export {activateForm};
