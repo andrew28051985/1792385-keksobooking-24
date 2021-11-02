@@ -109,4 +109,26 @@ formPrice.addEventListener('input', () => {
   formPrice.reportValidity();
 });
 
+const timeIn = formAd.querySelector('#timein');
+const timeOut = formAd.querySelector('#timeout');
+
+timeIn.addEventListener('input', () => {
+  if (timeIn.value === '12:00') {
+    timeOut.value = '12:00';
+  } else if (timeIn.value === '13:00') {
+    timeOut.value = '13:00';
+  } else if (timeIn.value === '14:00') {
+    timeOut.value = '14:00';
+  }
+});
+timeOut.addEventListener('input', () => {
+  if (timeOut.value === '12:00') {
+    timeIn.value = '12:00';
+  } else if (timeOut.value === '13:00') {
+    timeIn.value = '13:00';
+  } else if (timeOut.value === '14:00') {
+    timeIn.value = '14:00';
+  }
+});
+
 export {activateForm};
