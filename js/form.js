@@ -1,47 +1,4 @@
-const disabledForm = (classDisabled) => {
-  const formClass = document.querySelector(classDisabled);
-  formClass.classList.add('ad-form--disabled');
-  const elementsSelect = formClass.querySelectorAll('select');
-  elementsSelect.forEach((element) => {
-    element.disabled = true;
-  });
-  const elementsInput = formClass.querySelectorAll('input');
-  elementsInput.forEach((element) => {
-    element.disabled = true;
-  });
-  const elementsTextarea = formClass.querySelectorAll('textarea');
-  elementsTextarea.forEach((element) => {
-    element.disabled = true;
-  });
-  const elementsButton = formClass.querySelectorAll('button');
-  elementsButton.forEach((element) => {
-    element.disabled = true;
-  });
-};
-
-const activateForm = (classAvtivate) => {
-  const formClass = document.querySelector(classAvtivate);
-  formClass.classList.remove('ad-form--disabled');
-  const elementsSelect = formClass.querySelectorAll('select');
-  elementsSelect.forEach((element) => {
-    element.disabled = false;
-  });
-  const elementsInput = formClass.querySelectorAll('input');
-  elementsInput.forEach((element) => {
-    element.disabled = false;
-  });
-  const elementsTextarea = formClass.querySelectorAll('textarea');
-  elementsTextarea.forEach((element) => {
-    element.disabled = false;
-  });
-  const elementsButton = formClass.querySelectorAll('button');
-  elementsButton.forEach((element) => {
-    element.disabled = false;
-  });
-};
-
-disabledForm('.map__filters');
-disabledForm('.ad-form');
+import {mainMarkerLatLng} from './map.js';
 
 const formAd = document.querySelector('.ad-form');
 const formTitle = formAd.querySelector('#title');
@@ -179,7 +136,7 @@ roomNumber.addEventListener('input', () => {
 
 const address = formAd.querySelector('#address');
 
-address.value = '35.6895, 139.692';
+address.value = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
 address.setAttribute('readonly', true);
 
-export {activateForm};
+export {address};
