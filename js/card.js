@@ -1,4 +1,4 @@
-import {similarAds} from './util.js';
+import {createAutor, createLocation, createOffer} from './data.js';
 
 // Функция проверки на отсутствие данных и удаление элемента html, если данных нет
 const dataVerification = (data, elementDelete) => {
@@ -8,10 +8,6 @@ const dataVerification = (data, elementDelete) => {
   }
   return true;
 };
-// Находим куда вставлять заполненную карточку объявления
-const canvasAds = document.querySelector('.map__canvas');
-// Находим шаблон карточки объявления
-const cardTemplate = document.querySelector('#card').content;
 // Данные сопоставления типов жилья для отображения в карточке
 const TYPE_VISIBLE = {
   palace: 'Дворец',
@@ -20,78 +16,148 @@ const TYPE_VISIBLE = {
   bungalow: 'Бунгало',
   hotel: 'Отель',
 };
-// Сохраняем массив с данными по объявлениям
-const ads = similarAds();
+//Создаем массив с данными для генерации обычных меток
+const points = [
+  {
+    autor: createAutor().avatar,
+    title: createOffer().title,
+    lat: createLocation().lat,
+    lng: createLocation().lng,
+    price: createOffer().price,
+    type: createOffer().type,
+    features: createOffer().features,
+    description: createOffer().description,
+    photos: createOffer().photos,
+  },
+  {
+    autor: createAutor().avatar,
+    title: createOffer().title,
+    lat: createLocation().lat,
+    lng: createLocation().lng,
+    price: createOffer().price,
+    type: createOffer().type,
+    rooms: createOffer().rooms,
+    guests: createOffer().guests,
+    checkin: createOffer().checkin,
+    checkout: createOffer().checkout,
+    features: createOffer().features,
+    description: createOffer().description,
+  },
+  {
+    autor: createAutor().avatar,
+    title: createOffer().title,
+    lat: createLocation().lat,
+    lng: createLocation().lng,
+    price: createOffer().price,
+    type: createOffer().type,
+    rooms: createOffer().rooms,
+    guests: createOffer().guests,
+    checkin: createOffer().checkin,
+    checkout: createOffer().checkout,
+    features: createOffer().features,
+  },
+  {
+    autor: createAutor().avatar,
+    title: createOffer().title,
+    lat: createLocation().lat,
+    lng: createLocation().lng,
+    price: createOffer().price,
+    type: createOffer().type,
+    rooms: createOffer().rooms,
+    guests: createOffer().guests,
+    checkin: createOffer().checkin,
+    checkout: createOffer().checkout,
+    features: createOffer().features,
+    description: createOffer().description,
+    photos: createOffer().photos,
+  },
+  {
+    autor: createAutor().avatar,
+    title: createOffer().title,
+    lat: createLocation().lat,
+    lng: createLocation().lng,
+    price: createOffer().price,
+    type: createOffer().type,
+    rooms: createOffer().rooms,
+    guests: createOffer().guests,
+    checkin: createOffer().checkin,
+    checkout: createOffer().checkout,
+    features: createOffer().features,
+    description: createOffer().description,
+    photos: createOffer().photos,
+  },
+];
+//Функция генерации шаблона карточки c данными объявления для показа в балуне
+const createCustomPopup = (point) => {
+  const balunTemplate = document.querySelector('#card').content.querySelector('.popup');  //Находим шаблон объявления
+  const balunElement = balunTemplate.cloneNode(true); //Копируем шаблон
 
-// Запускаем генерацию карточек объявлений, проходя по массиву с данными
-ads.forEach(({autor, offer}) => {
-  const cardClone = cardTemplate.querySelector('.popup').cloneNode(true);
-  // Аватар
-  const cardAutor = cardClone.querySelector('.popup__avatar');
-  if (dataVerification(autor.avatar, cardAutor)) {
-    cardAutor.src = autor.avatar;
+  //Заполняем шаблон данными
+  //Аватар
+  const autor = balunElement.querySelector('.popup__avatar'); //Находим аватар
+  if (dataVerification(point.autor, autor)) {    //Если в данных есть аватар, то заполняем его данными, если нет, то удаляем элемент из разметки
+    autor.src = point.autor;   //Заполняем данными элемент аватара
   }
-  // Заголовок
-  const cardTitle = cardClone.querySelector('.popup__title');
-  if (dataVerification(offer.title, cardTitle)) {
-    cardTitle.textContent = offer.title;
+  //Заголовок
+  const title = balunElement.querySelector('.popup__title');
+  if (dataVerification(point.title, title)) {
+    title.textContent = point.title;
   }
-  // Адрес
-  const cardAdress = cardClone.querySelector('.popup__text--address');
-  if (dataVerification(offer.address, cardAdress)) {
-    cardAdress.textContent = offer.address;
+  //Адрес
+  balunElement.querySelector('.popup__text--address').textContent = `${point.lat}, ${point.lng}`;
+  //Стоимость
+  const price = balunElement.querySelector('.popup__text--price');
+  const priceMess = price.querySelector('span');
+  if (dataVerification(point.price, price)) {
+    price.textContent = `${point.price} ${priceMess.innerText}`;
   }
-  // Стоимость
-  const cardPrice = cardClone.querySelector('.popup__text--price');
-  const cardPriceMess = cardPrice.querySelector('span');
-  if (dataVerification(offer.price, cardPrice)) {
-    cardPrice.textContent = `${offer.price} ${cardPriceMess.innerText}`;
-  }
-  // тип жилья
-  const cardType = cardClone.querySelector('.popup__type');
-  if (dataVerification (offer.type, cardType)) {
-    cardType.textContent = TYPE_VISIBLE[offer.type];
+  //Тип жилья
+  const type = balunElement.querySelector('.popup__type');
+  if (dataVerification (point.type, type)) {
+    type.textContent = TYPE_VISIBLE[point.type];
   }
   // Количество комнат и гостей
-  const cardCapacity = cardClone.querySelector('.popup__text--capacity');
-  if (dataVerification(offer.rooms, cardCapacity) && dataVerification(offer.guests, cardCapacity)) {
-    cardCapacity.textContent = `${offer.rooms} комнаты для ${offer.guests} гостей`;
+  const capacity = balunElement.querySelector('.popup__text--capacity');
+  if (dataVerification(point.rooms, capacity) && dataVerification(point.guests, capacity)) {
+    capacity.textContent = `${point.rooms} комнаты для ${point.guests} гостей`;
   }
   // Время заезда и выезда
-  const cardTime = cardClone.querySelector('.popup__text--time');
-  if (dataVerification(offer.checkin, cardTime) && dataVerification(offer.checkout, cardTime)) {
-    cardTime.textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
+  const time = balunElement.querySelector('.popup__text--time');
+  if (dataVerification(point.checkin, time) && dataVerification(point.checkout, time)) {
+    time.textContent = `Заезд после ${point.checkin}, выезд до ${point.checkout}`;
   }
   // удобства
-  const cardFuturesList = cardClone.querySelectorAll('.popup__feature');
-  const cardFutures = cardClone.querySelector('.popup__features');
-  if (dataVerification(offer.features, cardFutures)) {
-    cardFuturesList.forEach((cardFuturesListItem) => {
-      const isTrue = offer.features.some(
-        (features) => cardFuturesListItem.classList.contains(`popup__feature--${features}`));
+  const futuresList = balunElement.querySelectorAll('.popup__feature');
+  const futures = balunElement.querySelector('.popup__features');
+  if (dataVerification(point.features, futures)) {
+    futuresList.forEach((futuresListItem) => {
+      const isTrue = point.features.some(
+        (features) => futuresListItem.classList.contains(`popup__feature--${features}`));
       if (!isTrue) {
-        cardFuturesListItem.remove();
+        futuresListItem.remove();
       }
     });
   }
   // Описание
-  const cardDescription = cardClone.querySelector('.popup__description');
-  if (dataVerification (offer.description, cardDescription)) {
-    cardDescription.textContent = offer.description;
+  const description = balunElement.querySelector('.popup__description');
+  if (dataVerification (point.description, description)) {
+    description.textContent = point.description;
   }
   // фото
-  const cardPhotos = cardClone.querySelector('.popup__photos');
-  if (dataVerification(offer.photos, cardPhotos)) {
+  const photos = balunElement.querySelector('.popup__photos');
+  if (dataVerification(point.photos, photos)) {
     const cardsSaveContainer = document.createDocumentFragment();
-    const arrayPhotos = offer.photos;
+    const arrayPhotos = point.photos;
     arrayPhotos.forEach((userPhoto) => {
-      const cardPhoto = cardPhotos.querySelector('img').cloneNode(true);
+      const cardPhoto = photos.querySelector('img').cloneNode(true);
       cardPhoto.src = userPhoto;
       cardsSaveContainer.append(cardPhoto);
     });
-    cardPhotos.innerHTML = '';
-    cardPhotos.append(cardsSaveContainer);
+    photos.innerHTML = '';
+    photos.append(cardsSaveContainer);
   }
-  // Вставляем данные в карточку
-  canvasAds.append(cardClone);
-});
+
+  return balunElement;  //Возвращаем, заполненную данными, карточку объявления
+};
+
+export {points, createCustomPopup};

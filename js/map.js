@@ -1,9 +1,12 @@
 import {activateForm} from './form-activate.js';
 import {address} from './form.js';
-import {createLocation} from './data.js';
+import {points, createCustomPopup} from './card.js';
 
 //Создаем карту
-const map = L.map('map-canvas')
+const map = L.map('map-canvas', {
+  zoomControl: true,
+  scrollWheelZoom: false,
+})
 //После загрузки карты разблокируем формы
   .on('load', () => {
     activateForm('.map__filters');
@@ -23,6 +26,7 @@ L.tileLayer(
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', // авторство
   },
 ).addTo(map); //добавляем на карту карту
+
 //Создаем иконку главного маркера
 const mainPinIcon = L.icon (
   {
@@ -49,46 +53,35 @@ mainPinMarker.on('moveend', (evt) => {         //Событие перетаск
   const coordinate = evt.target.getLatLng();   //Новые координаты маркера после установки
   address.value = `${(coordinate.lat).toFixed(5)}, ${(coordinate.lng).toFixed(5)}`;                                      //Записываем в форму координаты
 });
-// Создаем иконку обычной метки
-const pinIcon = L.icon(
-  {
-    iconUrl: './img/pin.svg',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  },
-);
-//Создаем массив с координатами
-const points = [
-  {
-    coordinate: createLocation(),
-    icon: pinIcon,
-  },
-  {
-    coordinate: createLocation(),
-    icon: pinIcon,
-  },
-  {
-    coordinate: createLocation(),
-    icon: pinIcon,
-  },
-  {
-    coordinate: createLocation(),
-    icon: pinIcon,
-  },
-  {
-    coordinate: createLocation(),
-    icon: pinIcon,
-  },
-];
-//создаем обычные метки в цикле
-points.forEach(({coordinate, icon}) => {
-  const marker = L.marker(
-    coordinate,
+
+//создаем функцию для генерации обычных меток
+const createMarker = ((point) => {
+  const {lat, lng} = point;
+  // Создаем иконку обычной метки
+  const pinIcon = L.icon(
     {
-      icon,
+      iconUrl: './img/pin.svg',
+      iconSize: [40, 40],
+      iconAnchor: [20, 40],
     },
   );
-  marker.addTo(map);
+  const marker = L.marker(                   //Выбираем данные
+    {
+      lat,
+      lng,
+    },
+    {
+      pinIcon,
+    },
+  );
+  marker
+    .addTo(map)                             //Размещаем на карте
+    .bindPopup(createCustomPopup(point));   //Добаляем балун(попап с объявлением) по клику на метке
+});
+
+//В цикле создаем метки
+points.forEach((point) => {
+  createMarker(point);
 });
 
 export {mainMarkerLatLng};
