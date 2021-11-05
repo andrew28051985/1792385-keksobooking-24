@@ -1,6 +1,6 @@
 import {activateForm} from './form-activate.js';
 import {address} from './form.js';
-import {points, createCustomPopup} from './card.js';
+import {createCustomPopup} from './card.js';
 
 //Создаем карту
 const map = L.map('map-canvas', {
@@ -18,7 +18,7 @@ const map = L.map('map-canvas', {
     lng: 139.69528,
   },
   //Устанавливаем масштаб карты
-  12);
+  13);
 //Добавляем на карту саму карту от www.openstreetmap.org
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', //карта
@@ -56,7 +56,7 @@ mainPinMarker.on('moveend', (evt) => {         //Событие перетаск
 
 //создаем функцию для генерации обычных меток
 const createMarker = ((point) => {
-  const {lat, lng} = point;
+  const {location} = point;
   // Создаем иконку обычной метки
   const pinIcon = L.icon(
     {
@@ -66,10 +66,7 @@ const createMarker = ((point) => {
     },
   );
   const marker = L.marker(                   //Выбираем данные
-    {
-      lat,
-      lng,
-    },
+    location,
     {
       pinIcon,
     },
@@ -80,8 +77,10 @@ const createMarker = ((point) => {
 });
 
 //В цикле создаем метки
-points.forEach((point) => {
-  createMarker(point);
-});
+const createAd = (ads) => {
+  ads.forEach((point) => {
+    createMarker(point);
+  });
+};
 
-export {mainMarkerLatLng};
+export {mainMarkerLatLng, createAd};
