@@ -31,27 +31,9 @@ const type = {
 };
 
 const minPrice = () => {
-  if (formType.value === 'bungalow') {
-    formPrice.placeholder = type.bungalow.placeholder;
-    formPrice.min = type.bungalow.min;
-    return type.bungalow.min;
-  } else if (formType.value === 'flat') {
-    formPrice.placeholder = type.flat.placeholder;
-    formPrice.min = type.flat.min;
-    return type.flat.min;
-  } else if (formType.value === 'hotel') {
-    formPrice.placeholder = type.hotel.placeholder;
-    formPrice.min = type.hotel.min;
-    return type.hotel.min;
-  } else if (formType.value === 'house') {
-    formPrice.placeholder = type.house.placeholder;
-    formPrice.min = type.house.min;
-    return type.house.min;
-  } else if (formType.value === 'palace') {
-    formPrice.placeholder = type.palace.placeholder;
-    formPrice.min = type.palace.min;
-    return type.palace.min;
-  }
+  formPrice.placeholder = type[formType.value].placeholder;
+  formPrice.min = type[formType.value].min;
+  return type[formType.value].min;
 };
 
 minPrice();
