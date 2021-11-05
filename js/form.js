@@ -1,47 +1,4 @@
-const disabledForm = (classDisabled) => {
-  const formClass = document.querySelector(classDisabled);
-  formClass.classList.add('ad-form--disabled');
-  const elementsSelect = formClass.querySelectorAll('select');
-  elementsSelect.forEach((element) => {
-    element.disabled = true;
-  });
-  const elementsInput = formClass.querySelectorAll('input');
-  elementsInput.forEach((element) => {
-    element.disabled = true;
-  });
-  const elementsTextarea = formClass.querySelectorAll('textarea');
-  elementsTextarea.forEach((element) => {
-    element.disabled = true;
-  });
-  const elementsButton = formClass.querySelectorAll('button');
-  elementsButton.forEach((element) => {
-    element.disabled = true;
-  });
-};
-
-const activateForm = (classAvtivate) => {
-  const formClass = document.querySelector(classAvtivate);
-  formClass.classList.remove('ad-form--disabled');
-  const elementsSelect = formClass.querySelectorAll('select');
-  elementsSelect.forEach((element) => {
-    element.disabled = false;
-  });
-  const elementsInput = formClass.querySelectorAll('input');
-  elementsInput.forEach((element) => {
-    element.disabled = false;
-  });
-  const elementsTextarea = formClass.querySelectorAll('textarea');
-  elementsTextarea.forEach((element) => {
-    element.disabled = false;
-  });
-  const elementsButton = formClass.querySelectorAll('button');
-  elementsButton.forEach((element) => {
-    element.disabled = false;
-  });
-};
-
-disabledForm('.map__filters');
-disabledForm('.ad-form');
+import {mainMarkerLatLng} from './map.js';
 
 const formAd = document.querySelector('.ad-form');
 const formTitle = formAd.querySelector('#title');
@@ -65,29 +22,38 @@ formTitle.addEventListener('input', () => {
   formTitle.reportValidity();
 });
 
+const type = {
+  bungalow: {min: 0, placeholder: 0},
+  flat: {min: 1000, placeholder: 1000},
+  hotel: {min: 3000, placeholder: 3000},
+  house: {min: 5000, placeholder: 5000},
+  palace: {min: 10000, placeholder: 10000},
+};
+
 const minPrice = () => {
   if (formType.value === 'bungalow') {
-    formPrice.placeholder = '0';
-    formPrice.min = 0;
-    return 0;
+    formPrice.placeholder = type.bungalow.placeholder;
+    formPrice.min = type.bungalow.min;
+    return type.bungalow.min;
   } else if (formType.value === 'flat') {
-    formPrice.placeholder = '1000';
-    formPrice.min = 1000;
-    return 1000;
+    formPrice.placeholder = type.flat.placeholder;
+    formPrice.min = type.flat.min;
+    return type.flat.min;
   } else if (formType.value === 'hotel') {
-    formPrice.placeholder = '3000';
-    formPrice.min = 3000;
-    return 3000;
+    formPrice.placeholder = type.hotel.placeholder;
+    formPrice.min = type.hotel.min;
+    return type.hotel.min;
   } else if (formType.value === 'house') {
-    formPrice.placeholder = '5000';
-    formPrice.min = 5000;
-    return 5000;
+    formPrice.placeholder = type.house.placeholder;
+    formPrice.min = type.house.min;
+    return type.house.min;
   } else if (formType.value === 'palace') {
-    formPrice.placeholder = '10000';
-    formPrice.min = 10000;
-    return 10000;
+    formPrice.placeholder = type.palace.placeholder;
+    formPrice.min = type.palace.min;
+    return type.palace.min;
   }
 };
+
 minPrice();
 formType.addEventListener('input', () => {
   minPrice();
@@ -134,19 +100,26 @@ timeOut.addEventListener('input', () => {
 const roomNumber = formAd.querySelector('#room_number');
 const capacity = formAd.querySelector('#capacity');
 const capacityAll = capacity.querySelectorAll('option');
+
+//Выбор варианта для 1 гостя, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].selected = true;
+//блокирую все варианты с выбором кол-ва гостей
+capacityAll.forEach((option) => {
+  option.disabled = true;
+});
+//открываю вариант с 1 гостем, т.к. выбрана по умолчанию 1 комната
+capacityAll[2].disabled = false;
+//отслеживаем выбор кол-ва комнат
 roomNumber.addEventListener('input', () => {
+  //блокирую все варианты с выбором кол-ва гостей
+  capacityAll.forEach((option) => {
+    option.disabled = true;
+  });
   if (roomNumber.value === '1') {
     capacity.value = 1;
-    capacityAll.forEach((option) => {
-      option.disabled = true;
-    });
     capacityAll[2].disabled = false;
   } else if (roomNumber.value === '2') {
     capacity.value = 1;
-    capacityAll.forEach((option) => {
-      option.disabled = true;
-    });
     capacityAll[2].disabled = false;
     capacityAll[1].disabled = false;
   } else if (roomNumber.value === '3') {
@@ -157,15 +130,13 @@ roomNumber.addEventListener('input', () => {
     capacityAll[3].disabled = true;
   } else if (roomNumber.value === '100') {
     capacity.value = 0;
-    capacityAll.forEach((option) => {
-      option.disabled = true;
-    });
     capacityAll[3].disabled = false;
   }
 });
 
 const address = formAd.querySelector('#address');
-address.value = '35.6895, 139.692';
+
+address.value = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
 address.setAttribute('readonly', true);
 
-export {activateForm};
+export {address};
