@@ -1,12 +1,18 @@
 import {mainMarkerLatLng} from './map.js';
+import {openModal} from './modal.js';
+import {borderFormError} from './util.js';
 
+const MIN_LENGTH_TITLE = 30;
+const MAX_LENGTH_TITLE = 100;
+const MAX_PRICE = 1000000;
 const formAd = document.querySelector('.ad-form');
 const formTitle = formAd.querySelector('#title');
 const formPrice = formAd.querySelector('#price');
 const formType = formAd.querySelector('#type');
-const MIN_LENGTH_TITLE = 30;
-const MAX_LENGTH_TITLE = 100;
-const MAX_PRICE = 1000000;
+const successModal = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
+const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
+const errorButton = errorModal.querySelector('.error__button');
+
 
 formTitle.addEventListener('input', () => {
   const lengthTitle = formTitle.value.length;
@@ -20,6 +26,14 @@ formTitle.addEventListener('input', () => {
   }
 
   formTitle.reportValidity();
+});
+formTitle.addEventListener('invalid', () => {
+  if (formTitle.validity.valueMissing) {
+    formTitle.setCustomValidity('Обязательное поле');
+    borderFormError(formTitle);
+  } else {
+    formTitle.setCustomValidity('');
+  }
 });
 
 const type = {
@@ -55,6 +69,14 @@ formPrice.addEventListener('input', () => {
   }
 
   formPrice.reportValidity();
+});
+formPrice.addEventListener('invalid', () => {
+  if (formPrice.validity.valueMissing) {
+    formPrice.setCustomValidity('Обязательное поле');
+    borderFormError(formPrice);
+  } else {
+    formPrice.setCustomValidity('');
+  }
 });
 
 const timeIn = formAd.querySelector('#timein');
@@ -120,5 +142,19 @@ const address = formAd.querySelector('#address');
 
 address.value = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
 address.setAttribute('readonly', true);
+
+//открытие модальных окон
+errorButton.addEventListener('click', () => {
+  console.log('Надо почистить форму');      //ДОПИСАТЬ ФУНКЦИОНАЛ ОЧИСТКИ ФОРМ !
+});
+
+formAd.addEventListener('submit', (evt) => {
+  evt.preventDefault;
+  openModal(successModal);
+});
+formAd.addEventListener('reset', (evt) => {
+  evt.preventDefault;
+  openModal(errorModal);
+});
 
 export {address};
