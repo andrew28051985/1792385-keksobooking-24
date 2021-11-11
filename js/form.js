@@ -1,4 +1,4 @@
-import {mainMarkerLatLng, resetMainMarker, closePopup} from './map.js';
+import {mainMarkerLatLng, resetMainMarker} from './map.js';
 import {openModal, closeModal} from './modal.js';
 import {borderFormError} from './util.js';
 import {sendData}  from './api.js';
@@ -15,19 +15,18 @@ const successModal = document.querySelector('#success').content.querySelector('.
 const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
 const errorButton = errorModal.querySelector('.error__button');
 
-formTitle.addEventListener('invalid', () => {
-  if (formTitle.validity.valueMissing) {
-    formTitle.setCustomValidity('Обязательное поле');
-    borderFormError(formTitle);
-  } else {
-    formTitle.setCustomValidity('');
+//Функция показа сообщения если поле пустое
+const setEmptyFieldErrorMessage = (evt) => {
+  const field = evt.target;
+  if (field.validity.valueMissing) {
+    field.setCustomValidity('Заполните обязательное поле.');
+    borderFormError(field);
   }
-});
+};
+
 formTitle.addEventListener('input', () => {
   const lengthTitle = formTitle.value.length;
-  if (lengthTitle === 0) {
-    formTitle.setCustomValidity('Обязательное поле');
-  } else if (lengthTitle < MIN_LENGTH_TITLE) {
+  if (lengthTitle < MIN_LENGTH_TITLE) {
     formTitle.setCustomValidity(`Еще нужно ввести ${MIN_LENGTH_TITLE - lengthTitle} симв.`);
     borderFormError(formTitle);
   } else if (lengthTitle > MAX_LENGTH_TITLE) {
@@ -36,7 +35,6 @@ formTitle.addEventListener('input', () => {
   } else {
     formTitle.setCustomValidity('');
   }
-
   formTitle.reportValidity();
 });
 
@@ -60,22 +58,16 @@ formType.addEventListener('input', () => {
   formPrice.reportValidity();
 });
 
-formPrice.addEventListener('invalid', () => {
-  if (formPrice.validity.valueMissing) {
-    formPrice.setCustomValidity('Обязательное поле');
-    borderFormError(formPrice);
-  } else {
-    formPrice.setCustomValidity('');
-  }
-});
 formPrice.addEventListener('input', () => {
   const MIN_PRICE = minPrice();
   const lengthPrice = formPrice.value;
 
   if (lengthPrice < MIN_PRICE) {
     formPrice.setCustomValidity(`Укажите цену выше на ${MIN_PRICE - lengthPrice}руб.`);
+    borderFormError(formPrice);
   } else if (lengthPrice > MAX_PRICE) {
     formPrice.setCustomValidity(`Укажите цену ниже на ${lengthPrice - MAX_PRICE} руб.`);
+    borderFormError(formPrice);
   } else {
     formPrice.setCustomValidity('');
   }
@@ -111,15 +103,15 @@ const capacityAll = capacity.querySelectorAll('option');
 
 //Выбор варианта для 1 гостя, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].selected = true;
-//блокирую все варианты с выбором кол-ва гостей
+//блокируем все варианты с выбором кол-ва гостей
 capacityAll.forEach((option) => {
   option.disabled = true;
 });
-//открываю вариант с 1 гостем, т.к. выбрана по умолчанию 1 комната
+//открываем вариант с 1 гостем, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].disabled = false;
 //отслеживаем выбор кол-ва комнат
 roomNumber.addEventListener('input', () => {
-  //блокирую все варианты с выбором кол-ва гостей
+  //блокируем все варианты с выбором кол-ва гостей
   capacityAll.forEach((option) => {
     option.disabled = true;
   });
@@ -147,6 +139,8 @@ const adressValue = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng
 address.value = adressValue;
 address.setAttribute('readonly', true);
 
+//Проверяем пустые поля всей формы
+formAd.addEventListener('invalid', setEmptyFieldErrorMessage, true);
 
 //Функция очистки формы
 const resetForm = (form) => {
@@ -180,15 +174,15 @@ const reset = ((modal) => {
   resetForm(formAd);
   resetForm(formFilters);
   resetMainMarker();
-  closePopup();
 });
 
+//Обработчик кнопки сброса
 formAd.addEventListener('reset', (evt) => {
   evt.preventDefault();
   reset();
 });
 
-//Функция отправки данных на сервер
+//Функция отправки данных на сервер по кнопке Опубликовать
 const sendUserFormData = (() => {
   formAd.addEventListener('submit', (evt) => {
     evt.preventDefault();

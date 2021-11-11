@@ -53,17 +53,9 @@ mainPinMarker.on('moveend', (evt) => {         //Событие перетаск
   const coordinate = evt.target.getLatLng();   //Новые координаты маркера после установки
   address.value = `${(coordinate.lat).toFixed(5)}, ${(coordinate.lng).toFixed(5)}`;                                      //Записываем в форму координаты
 });
-//Функция возврата в первоначальное положение главного маркера
-const resetMainMarker = (() => {
-  mainPinMarker.setLatLng({
-    lat: 35.68965,
-    lng: 139.69528,
-  });
-  map.setView({
-    lat: 35.68965,
-    lng: 139.69528,
-  }, 13);
-});
+
+//Создаем обтдельный слой для меток объявлений
+const markerGroup = L.layerGroup().addTo(map);
 
 //Функция для генерации обычных меток
 const createMarker = ((point) => {
@@ -83,20 +75,36 @@ const createMarker = ((point) => {
     },
   );
   marker
-    .addTo(map)                             //Размещаем на карте
+    .addTo(markerGroup)                             //Размещаем на карте
     .bindPopup(createCustomPopup(point));   //Добаляем балун(попап с объявлением) по клику на метке
-});
-
-//Функция закрытия окна объявления
-const closePopup = (() => {
-  L.marker().unbindPopup();
 });
 
 //Функция создания меток объявлений
 const createAd = (ads) => {
+  markerGroup.clearLayers();
   ads.forEach((point) => {
     createMarker(point);
   });
 };
 
-export {mainMarkerLatLng, createAd, resetMainMarker, closePopup};
+//Массив для копирования данных с сервера
+let allAdsData = [];
+//Функция копирования массива с сервера в массив allAdsData
+const saveAdsData = ((adsList) => {
+  allAdsData = adsList.slice();
+});
+
+//Функция возврата в первоначальное положение главного маркера и меток объявлений (для закрытия балуна)
+const resetMainMarker = (() => {
+  mainPinMarker.setLatLng({
+    lat: 35.68965,
+    lng: 139.69528,
+  });
+  map.setView({
+    lat: 35.68965,
+    lng: 139.69528,
+  }, 13);
+  createAd(allAdsData);
+});
+
+export {mainMarkerLatLng, createAd, resetMainMarker, saveAdsData};
