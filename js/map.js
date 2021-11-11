@@ -1,24 +1,29 @@
-import {activateForm} from './form-activate.js';
-import {address} from './form.js';
+import {setAddress} from './form.js';
 import {createCustomPopup} from './card.js';
 
 //Создаем карту
 const map = L.map('map-canvas', {
   zoomControl: true,
   scrollWheelZoom: false,
-})
-//После загрузки карты разблокируем формы
-  .on('load', () => {
-    activateForm('.map__filters');
-    activateForm('.ad-form');
+});
+//Инициализация карты
+const initMap = async () => {
+  map.on('load', () => {
+    setAddress(
+      {
+        lat: 35.68965,       //После инициализации устанавливаем адрес в форму
+        lng: 139.69528,
+      },
+    );
   })
-//Устанавливаем координаты центра карты
-  .setView({
-    lat: 35.68965,
-    lng: 139.69528,
-  },
-  //Устанавливаем масштаб карты
-  13);
+  //Устанавливаем координаты центра карты
+    .setView({
+      lat: 35.68965,
+      lng: 139.69528,
+    },
+    //Устанавливаем масштаб карты
+    13);
+};
 //Добавляем на карту саму карту от www.openstreetmap.org
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', //карта
@@ -47,11 +52,8 @@ const mainPinMarker = L.marker(
   },
 );
 mainPinMarker.addTo(map);           //добавляем главный маркер на карту
-//Переменная для передачи координат главного маркера в форму
-const mainMarkerLatLng =
 mainPinMarker.on('moveend', (evt) => {         //Событие перетаскивания маркера
-  const coordinate = evt.target.getLatLng();   //Новые координаты маркера после установки
-  address.value = `${(coordinate.lat).toFixed(5)}, ${(coordinate.lng).toFixed(5)}`;                                      //Записываем в форму координаты
+  setAddress(evt.target.getLatLng());
 });
 
 //Создаем обтдельный слой для меток объявлений
@@ -89,7 +91,7 @@ const createAd = (ads) => {
 
 //Массив для копирования данных с сервера
 let allAdsData = [];
-//Функция копирования массива с сервера в массив allAdsData
+//Функция копирования массива данных с сервера в массив allAdsData
 const saveAdsData = ((adsList) => {
   allAdsData = adsList.slice();
 });
@@ -104,7 +106,13 @@ const resetMainMarker = (() => {
     lat: 35.68965,
     lng: 139.69528,
   }, 13);
+  setAddress(
+    {
+      lat: 35.68965,
+      lng: 139.69528,
+    },
+  );
   createAd(allAdsData);
 });
 
-export {mainMarkerLatLng, createAd, resetMainMarker, saveAdsData};
+export {initMap, createAd, resetMainMarker, saveAdsData};

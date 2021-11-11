@@ -1,5 +1,5 @@
-import {mainMarkerLatLng, resetMainMarker} from './map.js';
-import {openModal, closeModal} from './modal.js';
+import {resetMainMarker} from './map.js';
+import {openModal, successModal, errorModal} from './modal.js';
 import {borderFormError} from './util.js';
 import {sendData}  from './api.js';
 
@@ -11,9 +11,6 @@ const formFilters = document.querySelector('.map__filters');
 const formTitle = formAd.querySelector('#title');
 const formPrice = formAd.querySelector('#price');
 const formType = formAd.querySelector('#type');
-const successModal = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
-const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
-const errorButton = errorModal.querySelector('.error__button');
 
 //Функция показа сообщения если поле пустое
 const setEmptyFieldErrorMessage = (evt) => {
@@ -135,8 +132,9 @@ roomNumber.addEventListener('input', () => {
 });
 
 const address = formAd.querySelector('#address');
-const adressValue = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
-address.value = adressValue;
+const setAddress = (({lat, lng}) => {
+  address.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+});
 address.setAttribute('readonly', true);
 
 //Проверяем пустые поля всей формы
@@ -160,13 +158,7 @@ const resetForm = (form) => {
   });
   minPrice();
   capacity.value = 1;
-  address.value = adressValue;
 };
-
-//открытие модальных окон
-errorButton.addEventListener('click', () => {
-  closeModal(errorModal);
-});
 
 //Функция сброса
 const reset = ((modal) => {
@@ -195,4 +187,4 @@ const sendUserFormData = (() => {
 });
 
 
-export {address, sendUserFormData};
+export {address, sendUserFormData, setAddress};
