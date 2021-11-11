@@ -53,8 +53,19 @@ mainPinMarker.on('moveend', (evt) => {         //Событие перетаск
   const coordinate = evt.target.getLatLng();   //Новые координаты маркера после установки
   address.value = `${(coordinate.lat).toFixed(5)}, ${(coordinate.lng).toFixed(5)}`;                                      //Записываем в форму координаты
 });
+//Функция возврата в первоначальное положение главного маркера
+const resetMainMarker = (() => {
+  mainPinMarker.setLatLng({
+    lat: 35.68965,
+    lng: 139.69528,
+  });
+  map.setView({
+    lat: 35.68965,
+    lng: 139.69528,
+  }, 13);
+});
 
-//создаем функцию для генерации обычных меток
+//Функция для генерации обычных меток
 const createMarker = ((point) => {
   const {location} = point;
   // Создаем иконку обычной метки
@@ -76,11 +87,16 @@ const createMarker = ((point) => {
     .bindPopup(createCustomPopup(point));   //Добаляем балун(попап с объявлением) по клику на метке
 });
 
-//В цикле создаем метки
+//Функция закрытия окна объявления
+const closePopup = (() => {
+  L.marker().unbindPopup();
+});
+
+//Функция создания меток объявлений
 const createAd = (ads) => {
   ads.forEach((point) => {
     createMarker(point);
   });
 };
 
-export {mainMarkerLatLng, createAd};
+export {mainMarkerLatLng, createAd, resetMainMarker, closePopup};

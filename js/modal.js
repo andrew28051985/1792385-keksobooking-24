@@ -19,4 +19,4 @@ const openModal = (nameModal) => {
   });
 };
 
-export {openModal};
+export {openModal, closeModal};

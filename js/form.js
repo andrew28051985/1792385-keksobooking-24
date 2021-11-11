@@ -1,11 +1,13 @@
-import {mainMarkerLatLng} from './map.js';
-import {openModal} from './modal.js';
+import {mainMarkerLatLng, resetMainMarker, closePopup} from './map.js';
+import {openModal, closeModal} from './modal.js';
 import {borderFormError} from './util.js';
+import {sendData}  from './api.js';
 
 const MIN_LENGTH_TITLE = 30;
 const MAX_LENGTH_TITLE = 100;
 const MAX_PRICE = 1000000;
 const formAd = document.querySelector('.ad-form');
+const formFilters = document.querySelector('.map__filters');
 const formTitle = formAd.querySelector('#title');
 const formPrice = formAd.querySelector('#price');
 const formType = formAd.querySelector('#type');
@@ -13,20 +15,6 @@ const successModal = document.querySelector('#success').content.querySelector('.
 const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
 const errorButton = errorModal.querySelector('.error__button');
 
-
-formTitle.addEventListener('input', () => {
-  const lengthTitle = formTitle.value.length;
-
-  if (lengthTitle < MIN_LENGTH_TITLE) {
-    formTitle.setCustomValidity(`Еще нужно ввести ${MIN_LENGTH_TITLE - lengthTitle} симв.`);
-  } else if (lengthTitle > MAX_LENGTH_TITLE) {
-    formTitle.setCustomValidity(`Нужно удалить ${lengthTitle - MAX_LENGTH_TITLE} симв.`);
-  } else {
-    formTitle.setCustomValidity('');
-  }
-
-  formTitle.reportValidity();
-});
 formTitle.addEventListener('invalid', () => {
   if (formTitle.validity.valueMissing) {
     formTitle.setCustomValidity('Обязательное поле');
@@ -34,6 +22,22 @@ formTitle.addEventListener('invalid', () => {
   } else {
     formTitle.setCustomValidity('');
   }
+});
+formTitle.addEventListener('input', () => {
+  const lengthTitle = formTitle.value.length;
+  if (lengthTitle === 0) {
+    formTitle.setCustomValidity('Обязательное поле');
+  } else if (lengthTitle < MIN_LENGTH_TITLE) {
+    formTitle.setCustomValidity(`Еще нужно ввести ${MIN_LENGTH_TITLE - lengthTitle} симв.`);
+    borderFormError(formTitle);
+  } else if (lengthTitle > MAX_LENGTH_TITLE) {
+    formTitle.setCustomValidity(`Нужно удалить ${lengthTitle - MAX_LENGTH_TITLE} симв.`);
+    borderFormError(formTitle);
+  } else {
+    formTitle.setCustomValidity('');
+  }
+
+  formTitle.reportValidity();
 });
 
 const type = {
@@ -56,6 +60,14 @@ formType.addEventListener('input', () => {
   formPrice.reportValidity();
 });
 
+formPrice.addEventListener('invalid', () => {
+  if (formPrice.validity.valueMissing) {
+    formPrice.setCustomValidity('Обязательное поле');
+    borderFormError(formPrice);
+  } else {
+    formPrice.setCustomValidity('');
+  }
+});
 formPrice.addEventListener('input', () => {
   const MIN_PRICE = minPrice();
   const lengthPrice = formPrice.value;
@@ -69,14 +81,6 @@ formPrice.addEventListener('input', () => {
   }
 
   formPrice.reportValidity();
-});
-formPrice.addEventListener('invalid', () => {
-  if (formPrice.validity.valueMissing) {
-    formPrice.setCustomValidity('Обязательное поле');
-    borderFormError(formPrice);
-  } else {
-    formPrice.setCustomValidity('');
-  }
 });
 
 const timeIn = formAd.querySelector('#timein');
@@ -139,22 +143,62 @@ roomNumber.addEventListener('input', () => {
 });
 
 const address = formAd.querySelector('#address');
-
-address.value = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
+const adressValue = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
+address.value = adressValue;
 address.setAttribute('readonly', true);
+
+
+//Функция очистки формы
+const resetForm = (form) => {
+  const formInputs = form.querySelectorAll('input');
+  formInputs.forEach((input) => {
+    input.value = '';
+    input.checked = false;
+  });
+  const formTextArea = form.querySelectorAll('textarea');
+  formTextArea.forEach((textarea) => {
+    textarea.value = '';
+  });
+  const formSelects = form.querySelectorAll('select');
+  formSelects.forEach((select) => {
+    const formSelectSelected = select.querySelector('[selected]');
+    formSelectSelected.selected = true;
+  });
+  minPrice();
+  capacity.value = 1;
+  address.value = adressValue;
+};
 
 //открытие модальных окон
 errorButton.addEventListener('click', () => {
-  console.log('Надо почистить форму');      //ДОПИСАТЬ ФУНКЦИОНАЛ ОЧИСТКИ ФОРМ !
+  closeModal(errorModal);
 });
 
-formAd.addEventListener('submit', (evt) => {
-  evt.preventDefault;
-  openModal(successModal);
+//Функция сброса
+const reset = ((modal) => {
+  modal;
+  resetForm(formAd);
+  resetForm(formFilters);
+  resetMainMarker();
+  closePopup();
 });
+
 formAd.addEventListener('reset', (evt) => {
-  evt.preventDefault;
-  openModal(errorModal);
+  evt.preventDefault();
+  reset();
 });
 
-export {address};
+//Функция отправки данных на сервер
+const sendUserFormData = (() => {
+  formAd.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    sendData(
+      new FormData(evt.target),
+      () => reset(openModal(successModal)),
+      () => openModal(errorModal),
+    );
+  });
+});
+
+
+export {address, sendUserFormData};
