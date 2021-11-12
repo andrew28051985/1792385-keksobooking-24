@@ -9,7 +9,7 @@ const getData = ((onSuccess, onFail) => {
     })
     .then((response) => response.json())     // полученные данные преобразуем из JSON в объект
     .then((ads) => {
-      onSuccess(ads);//.slice(0, ADS_COUNT));  //получив объект с данными отрисовываем на карте
+      onSuccess(ads);         //получив объект с данными отрисовываем на карте
     })
     .catch((error) => {         //если есть ошибки в запросе, то показываем сообщение об ошибке
       onFail(error);        //функция показа сообщения об ошибке
