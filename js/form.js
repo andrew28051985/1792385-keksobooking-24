@@ -147,8 +147,11 @@ formAd.addEventListener('invalid', setEmptyFieldErrorMessage, true);
 const resetForm = (form) => {
   const formInputs = form.querySelectorAll('input');
   formInputs.forEach((input) => {
-    input.value = '';
-    input.checked = false;
+    if (!input.type === 'checkbox') {
+      input.value = '';
+    } else {
+      input.checked = false;
+    }
   });
   const formTextArea = form.querySelectorAll('textarea');
   formTextArea.forEach((textarea) => {

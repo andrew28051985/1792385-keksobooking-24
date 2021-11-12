@@ -1,5 +1,7 @@
 import {setAddress} from './form.js';
 import {createCustomPopup} from './card.js';
+import {featuresServer} from './map-filter.js';
+import {setFilterFormChange} from './map-filter.js';
 
 //Создаем карту
 const map = L.map('map-canvas', {
@@ -18,7 +20,7 @@ const initMap = async () => {
   })
   //Устанавливаем координаты центра карты
     .setView({
-      lat: 35.68965,
+      lat: 35.67278,
       lng: 139.69528,
     },
     //Устанавливаем масштаб карты
@@ -84,7 +86,8 @@ const createMarker = ((point) => {
 //Функция создания меток объявлений
 const createAd = (ads) => {
   markerGroup.clearLayers();
-  ads.forEach((point) => {
+  const filteredAds = featuresServer(ads);
+  filteredAds.forEach((point) => {
     createMarker(point);
   });
 };
@@ -92,8 +95,9 @@ const createAd = (ads) => {
 //Массив для копирования данных с сервера
 let allAdsData = [];
 //Функция копирования массива данных с сервера в массив allAdsData
-const saveAdsData = ((adsList) => {
-  allAdsData = adsList.slice();
+const saveAdsData = ((ads) => {
+  allAdsData = ads.slice();
+  return allAdsData;
 });
 
 //Функция возврата в первоначальное положение главного маркера и меток объявлений (для закрытия балуна)
@@ -103,7 +107,7 @@ const resetMainMarker = (() => {
     lng: 139.69528,
   });
   map.setView({
-    lat: 35.68965,
+    lat: 35.67278,
     lng: 139.69528,
   }, 13);
   setAddress(
@@ -114,5 +118,10 @@ const resetMainMarker = (() => {
   );
   createAd(allAdsData);
 });
+
+setFilterFormChange (() => {
+  createAd(allAdsData);
+});
+
 
 export {initMap, createAd, resetMainMarker, saveAdsData};

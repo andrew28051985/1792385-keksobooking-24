@@ -3,19 +3,14 @@ import {showAlert} from './util.js';
 import {sendUserFormData} from './form.js';
 import {initMap, createAd, saveAdsData} from'./map.js';
 import {getData} from './api.js';
-import {featuresServer} from './map-filter.js';
-
-const ADS_COUNT = 10;
 
 disabledForm('.map__filters');
 disabledForm('.ad-form');
 
 const getSimilarAds = () => {
   getData((ads) => {
-    featuresServer(ads);
-    console.log(featuresServer(ads));
-    saveAdsData(ads.slice(0, ADS_COUNT));
-    createAd(ads.slice(0, ADS_COUNT));
+    saveAdsData(ads);
+    createAd(ads);
     activateForm('.map__filters');
   }, (error) => showAlert(error));
 };

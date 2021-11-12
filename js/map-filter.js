@@ -1,6 +1,7 @@
-import {formFilters} from './form.js';
+import {debounce} from './util.js';
 
-const mapFeatures = formFilters.querySelector('.map__features');
+const ADS_COUNT = 10;
+const mapFeatures = document.querySelector('.map__features');
 const features = mapFeatures.querySelectorAll('input');
 
 const isChecked = (value) => {
@@ -8,16 +9,16 @@ const isChecked = (value) => {
   return condition;
 };
 
-mapFeatures.addEventListener('change', () => {
-  const selectFeature = [...features].filter(isChecked);
-
-  //console.log(selectFeature);
-});
-
 const featuresServer = ((ads) => {
-  const feturesServerOnFilter = ads.filter((value) =>
-    value.offer.features === 'wifi');
-  return feturesServerOnFilter;
+  const selectFeature = [...features].filter(isChecked);
+  const feturesServerOnFilter = ads.slice().filter((ad) => selectFeature.every((feature) =>
+    ad.offer.features && ad.offer.features.includes(feature.value)));
+  const feturesServerOnFilterTen = feturesServerOnFilter.slice(0, ADS_COUNT);
+  return feturesServerOnFilterTen;
 });
 
-export {featuresServer};
+const setFilterFormChange = (cb) => {
+  mapFeatures.addEventListener('change', debounce(cb));
+};
+
+export {featuresServer, setFilterFormChange};
