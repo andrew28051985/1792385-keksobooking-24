@@ -1,24 +1,40 @@
-import {mainMarkerLatLng} from './map.js';
+import {mainMarkerLatLng, resetMainMarker} from './map.js';
+import {openModal, closeModal} from './modal.js';
+import {borderFormError} from './util.js';
+import {sendData}  from './api.js';
 
-const formAd = document.querySelector('.ad-form');
-const formTitle = formAd.querySelector('#title');
-const formPrice = formAd.querySelector('#price');
-const formType = formAd.querySelector('#type');
 const MIN_LENGTH_TITLE = 30;
 const MAX_LENGTH_TITLE = 100;
 const MAX_PRICE = 1000000;
+const formAd = document.querySelector('.ad-form');
+const formFilters = document.querySelector('.map__filters');
+const formTitle = formAd.querySelector('#title');
+const formPrice = formAd.querySelector('#price');
+const formType = formAd.querySelector('#type');
+const successModal = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
+const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
+const errorButton = errorModal.querySelector('.error__button');
+
+//Функция показа сообщения если поле пустое
+const setEmptyFieldErrorMessage = (evt) => {
+  const field = evt.target;
+  if (field.validity.valueMissing) {
+    field.setCustomValidity('Заполните обязательное поле.');
+    borderFormError(field);
+  }
+};
 
 formTitle.addEventListener('input', () => {
   const lengthTitle = formTitle.value.length;
-
   if (lengthTitle < MIN_LENGTH_TITLE) {
     formTitle.setCustomValidity(`Еще нужно ввести ${MIN_LENGTH_TITLE - lengthTitle} симв.`);
+    borderFormError(formTitle);
   } else if (lengthTitle > MAX_LENGTH_TITLE) {
     formTitle.setCustomValidity(`Нужно удалить ${lengthTitle - MAX_LENGTH_TITLE} симв.`);
+    borderFormError(formTitle);
   } else {
     formTitle.setCustomValidity('');
   }
-
   formTitle.reportValidity();
 });
 
@@ -31,27 +47,9 @@ const type = {
 };
 
 const minPrice = () => {
-  if (formType.value === 'bungalow') {
-    formPrice.placeholder = type.bungalow.placeholder;
-    formPrice.min = type.bungalow.min;
-    return type.bungalow.min;
-  } else if (formType.value === 'flat') {
-    formPrice.placeholder = type.flat.placeholder;
-    formPrice.min = type.flat.min;
-    return type.flat.min;
-  } else if (formType.value === 'hotel') {
-    formPrice.placeholder = type.hotel.placeholder;
-    formPrice.min = type.hotel.min;
-    return type.hotel.min;
-  } else if (formType.value === 'house') {
-    formPrice.placeholder = type.house.placeholder;
-    formPrice.min = type.house.min;
-    return type.house.min;
-  } else if (formType.value === 'palace') {
-    formPrice.placeholder = type.palace.placeholder;
-    formPrice.min = type.palace.min;
-    return type.palace.min;
-  }
+  formPrice.placeholder = type[formType.value].placeholder;
+  formPrice.min = type[formType.value].min;
+  return type[formType.value].min;
 };
 
 minPrice();
@@ -66,8 +64,10 @@ formPrice.addEventListener('input', () => {
 
   if (lengthPrice < MIN_PRICE) {
     formPrice.setCustomValidity(`Укажите цену выше на ${MIN_PRICE - lengthPrice}руб.`);
+    borderFormError(formPrice);
   } else if (lengthPrice > MAX_PRICE) {
     formPrice.setCustomValidity(`Укажите цену ниже на ${lengthPrice - MAX_PRICE} руб.`);
+    borderFormError(formPrice);
   } else {
     formPrice.setCustomValidity('');
   }
@@ -103,15 +103,15 @@ const capacityAll = capacity.querySelectorAll('option');
 
 //Выбор варианта для 1 гостя, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].selected = true;
-//блокирую все варианты с выбором кол-ва гостей
+//блокируем все варианты с выбором кол-ва гостей
 capacityAll.forEach((option) => {
   option.disabled = true;
 });
-//открываю вариант с 1 гостем, т.к. выбрана по умолчанию 1 комната
+//открываем вариант с 1 гостем, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].disabled = false;
 //отслеживаем выбор кол-ва комнат
 roomNumber.addEventListener('input', () => {
-  //блокирую все варианты с выбором кол-ва гостей
+  //блокируем все варианты с выбором кол-ва гостей
   capacityAll.forEach((option) => {
     option.disabled = true;
   });
@@ -135,8 +135,64 @@ roomNumber.addEventListener('input', () => {
 });
 
 const address = formAd.querySelector('#address');
-
-address.value = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
+const adressValue = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
+address.value = adressValue;
 address.setAttribute('readonly', true);
 
-export {address};
+//Проверяем пустые поля всей формы
+formAd.addEventListener('invalid', setEmptyFieldErrorMessage, true);
+
+//Функция очистки формы
+const resetForm = (form) => {
+  const formInputs = form.querySelectorAll('input');
+  formInputs.forEach((input) => {
+    input.value = '';
+    input.checked = false;
+  });
+  const formTextArea = form.querySelectorAll('textarea');
+  formTextArea.forEach((textarea) => {
+    textarea.value = '';
+  });
+  const formSelects = form.querySelectorAll('select');
+  formSelects.forEach((select) => {
+    const formSelectSelected = select.querySelector('[selected]');
+    formSelectSelected.selected = true;
+  });
+  minPrice();
+  capacity.value = 1;
+  address.value = adressValue;
+};
+
+//открытие модальных окон
+errorButton.addEventListener('click', () => {
+  closeModal(errorModal);
+});
+
+//Функция сброса
+const reset = ((modal) => {
+  modal;
+  resetForm(formAd);
+  resetForm(formFilters);
+  resetMainMarker();
+});
+
+//Обработчик кнопки сброса
+formAd.addEventListener('reset', (evt) => {
+  evt.preventDefault();
+  reset();
+});
+
+//Функция отправки данных на сервер по кнопке Опубликовать
+const sendUserFormData = (() => {
+  formAd.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    sendData(
+      new FormData(evt.target),
+      () => reset(openModal(successModal)),
+      () => openModal(errorModal),
+    );
+  });
+});
+
+
+export {address, sendUserFormData};

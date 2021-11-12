@@ -1,6 +1,6 @@
 import {activateForm} from './form-activate.js';
 import {address} from './form.js';
-import {points, createCustomPopup} from './card.js';
+import {createCustomPopup} from './card.js';
 
 //Создаем карту
 const map = L.map('map-canvas', {
@@ -18,7 +18,7 @@ const map = L.map('map-canvas', {
     lng: 139.69528,
   },
   //Устанавливаем масштаб карты
-  12);
+  13);
 //Добавляем на карту саму карту от www.openstreetmap.org
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', //карта
@@ -54,9 +54,12 @@ mainPinMarker.on('moveend', (evt) => {         //Событие перетаск
   address.value = `${(coordinate.lat).toFixed(5)}, ${(coordinate.lng).toFixed(5)}`;                                      //Записываем в форму координаты
 });
 
-//создаем функцию для генерации обычных меток
+//Создаем обтдельный слой для меток объявлений
+const markerGroup = L.layerGroup().addTo(map);
+
+//Функция для генерации обычных меток
 const createMarker = ((point) => {
-  const {lat, lng} = point;
+  const {location} = point;
   // Создаем иконку обычной метки
   const pinIcon = L.icon(
     {
@@ -66,22 +69,42 @@ const createMarker = ((point) => {
     },
   );
   const marker = L.marker(                   //Выбираем данные
-    {
-      lat,
-      lng,
-    },
+    location,
     {
       pinIcon,
     },
   );
   marker
-    .addTo(map)                             //Размещаем на карте
+    .addTo(markerGroup)                             //Размещаем на карте
     .bindPopup(createCustomPopup(point));   //Добаляем балун(попап с объявлением) по клику на метке
 });
 
-//В цикле создаем метки
-points.forEach((point) => {
-  createMarker(point);
+//Функция создания меток объявлений
+const createAd = (ads) => {
+  markerGroup.clearLayers();
+  ads.forEach((point) => {
+    createMarker(point);
+  });
+};
+
+//Массив для копирования данных с сервера
+let allAdsData = [];
+//Функция копирования массива с сервера в массив allAdsData
+const saveAdsData = ((adsList) => {
+  allAdsData = adsList.slice();
 });
 
-export {mainMarkerLatLng};
+//Функция возврата в первоначальное положение главного маркера и меток объявлений (для закрытия балуна)
+const resetMainMarker = (() => {
+  mainPinMarker.setLatLng({
+    lat: 35.68965,
+    lng: 139.69528,
+  });
+  map.setView({
+    lat: 35.68965,
+    lng: 139.69528,
+  }, 13);
+  createAd(allAdsData);
+});
+
+export {mainMarkerLatLng, createAd, resetMainMarker, saveAdsData};

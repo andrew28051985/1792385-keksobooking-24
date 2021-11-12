@@ -12,6 +12,7 @@ const MIN_ROOMS = 1;
 const MAX_ROOMS = 10;
 const MIN_GUEST = 1;
 const MAX_GUEST = 20;
+const SIMILAR_ADS_COUNT = 10;
 const TITLE = 'Внимание! Супер предложение!';
 const DESCRIPTION = 'Просторная комната, светлая, удобная!';
 const TYPE = [
@@ -91,4 +92,15 @@ const createOffer = () => {
   return offer;
 };
 
-export {createAutor, createLocation, createOffer};
+const createAds = () => {
+  const ads = {
+    autor: createAutor(),
+    offer: createOffer(),
+    location: createLocation(),
+  };
+  return ads;
+};
+
+const similarAds = () => Array.from({length: SIMILAR_ADS_COUNT}, createAds);
+
+export {createAutor, createLocation, createOffer, similarAds};
