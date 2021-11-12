@@ -1,7 +1,7 @@
 import {setAddress} from './form.js';
 import {createCustomPopup} from './card.js';
 import {featuresServer} from './map-filter.js';
-import {setFilterFormChange} from './map-filter.js';
+import {setFilterFormChange, housingFilter/*compareRankAds*/} from './map-filter.js';
 
 //Создаем карту
 const map = L.map('map-canvas', {
@@ -87,11 +87,14 @@ const createMarker = ((point) => {
 const createAd = (ads) => {
   markerGroup.clearLayers();
   const filteredAds = featuresServer(ads);
-  filteredAds.forEach((point) => {
-    createMarker(point);
-  });
-};
+  const filteredAdsAll = housingFilter(filteredAds).slice(0, 10);//sort(compareRankAds).slice(0, 10);
 
+  filteredAdsAll.forEach((point) => {
+    createMarker(point);
+    console.log(point.offer.type+'-'+point.offer.price+'-'+point.offer.rooms+'-'+point.offer.guests);
+  });
+  console.log('++++++++');
+};
 //Массив для копирования данных с сервера
 let allAdsData = [];
 //Функция копирования массива данных с сервера в массив allAdsData
