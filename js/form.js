@@ -1,4 +1,4 @@
-import {mainMarkerLatLng, resetMainMarker} from './map.js';
+import {resetMainMarker} from './map.js';
 import {openModal, closeModal} from './modal.js';
 import {borderFormError} from './util.js';
 import {sendData}  from './api.js';
@@ -135,8 +135,9 @@ roomNumber.addEventListener('input', () => {
 });
 
 const address = formAd.querySelector('#address');
-const adressValue = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
-address.value = adressValue;
+const setAddress = (({lat, lng}) => {
+  address.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+});
 address.setAttribute('readonly', true);
 
 //Проверяем пустые поля всей формы
@@ -160,13 +161,7 @@ const resetForm = (form) => {
   });
   minPrice();
   capacity.value = 1;
-  address.value = adressValue;
 };
-
-//открытие модальных окон
-errorButton.addEventListener('click', () => {
-  closeModal(errorModal);
-});
 
 //Функция сброса
 const reset = ((modal) => {
@@ -181,6 +176,10 @@ formAd.addEventListener('reset', (evt) => {
   evt.preventDefault();
   reset();
 });
+//закрытие модальных окон
+errorButton.addEventListener('click', () => {
+  closeModal(errorModal);
+});
 
 //Функция отправки данных на сервер по кнопке Опубликовать
 const sendUserFormData = (() => {
@@ -194,5 +193,4 @@ const sendUserFormData = (() => {
   });
 });
 
-
-export {address, sendUserFormData};
+export {sendUserFormData, setAddress};
