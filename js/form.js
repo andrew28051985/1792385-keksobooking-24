@@ -1,5 +1,5 @@
 import {resetMainMarker} from './map.js';
-import {openModal, successModal, errorModal} from './modal.js';
+import {openModal, closeModal} from './modal.js';
 import {borderFormError} from './util.js';
 import {sendData}  from './api.js';
 
@@ -11,6 +11,9 @@ const formFilters = document.querySelector('.map__filters');
 const formTitle = formAd.querySelector('#title');
 const formPrice = formAd.querySelector('#price');
 const formType = formAd.querySelector('#type');
+const successModal = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
+const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
+const errorButton = errorModal.querySelector('.error__button');
 
 //Функция показа сообщения если поле пустое
 const setEmptyFieldErrorMessage = (evt) => {
@@ -173,6 +176,10 @@ formAd.addEventListener('reset', (evt) => {
   evt.preventDefault();
   reset();
 });
+//закрытие модальных окон
+errorButton.addEventListener('click', () => {
+  closeModal(errorModal);
+});
 
 //Функция отправки данных на сервер по кнопке Опубликовать
 const sendUserFormData = (() => {
@@ -186,5 +193,4 @@ const sendUserFormData = (() => {
   });
 });
 
-
-export {address, sendUserFormData, setAddress};
+export {sendUserFormData, setAddress};
