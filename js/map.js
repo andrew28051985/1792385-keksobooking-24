@@ -1,7 +1,7 @@
 import {setAddress} from './form.js';
 import {createCustomPopup} from './card.js';
 import {featuresServer} from './map-filter.js';
-import {setFilterFormChange, housingFilter} from './map-filter.js';
+import {setFilterFormChange, compareRankAds} from './map-filter.js';
 
 const ADS_COUNT = 10;
 
@@ -89,10 +89,12 @@ const createMarker = ((point) => {
 const createAd = (ads) => {
   markerGroup.clearLayers();
   const filteredAds = featuresServer(ads);
-  const filteredAdsAll = housingFilter(filteredAds).slice(0, ADS_COUNT);
+  const filteredAdsAll = filteredAds.sort(compareRankAds).slice(0, ADS_COUNT);
   filteredAdsAll.forEach((point) => {
     createMarker(point);
+    console.log(point.offer.type+' '+point.offer.price+' '+point.offer.rooms+' '+point.offer.guests);
   });
+  console.log(filteredAdsAll.length +' ++++++++++++');
 };
 //Массив для копирования данных с сервера
 let allAdsData = [];

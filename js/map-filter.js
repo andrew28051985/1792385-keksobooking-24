@@ -37,6 +37,7 @@ const featuresServer = ((ads) => {
     ad.offer.features && ad.offer.features.includes(feature.value)));
   return feturesServerOnFilter;
 });
+/*
 //Фильтрация по полям housing
 const housingFilter = ((ads) => {
   const filterValue = {
@@ -57,15 +58,9 @@ const housingFilter = ((ads) => {
   }));
   return housingFilterAll;
 });
-
+*/
 //Сортировка объявлений по рангу
 const getRankFilter = ((ad) => {
-
-  const type = mapFilters.querySelector('#housing-type');
-  const price = mapFilters.querySelector('#housing-price');
-  const rooms = mapFilters.querySelector('#housing-rooms');
-  const guests = mapFilters.querySelector('#housing-guests');
-
   let rank = 0;
 
   if (ad.offer.type === type.value) {
@@ -90,4 +85,4 @@ const setFilterFormChange = (cb) => {
   mapFilters.addEventListener('change', debounce(cb));
 };
 
-export {featuresServer, setFilterFormChange, compareRankAds, housingFilter};
+export {featuresServer, setFilterFormChange, compareRankAds};
