@@ -1,3 +1,5 @@
+// Версия проекта с комментариями от 13.11.2021
+
 import {disabledForm, activateForm} from './form-activate.js';
 import {showAlert} from './util.js';
 import {sendUserFormData} from './form.js';
