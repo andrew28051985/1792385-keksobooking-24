@@ -30,7 +30,6 @@ const type = {
   palace: {min: 10000, placeholder: 10000},
 };
 
-//Функция показа сообщения если поле пустое
 const setEmptyFieldErrorMessage = (evt) => {
   const field = evt.target;
   if (field.validity.valueMissing) {
@@ -101,17 +100,12 @@ timeOut.addEventListener('input', () => {
   }
 });
 
-//Выбор варианта для 1 гостя, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].selected = true;
-//блокируем все варианты с выбором кол-ва гостей
 capacityAll.forEach((option) => {
   option.disabled = true;
 });
-//открываем вариант с 1 гостем, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].disabled = false;
-//отслеживаем выбор кол-ва комнат
 roomNumber.addEventListener('input', () => {
-  //блокируем все варианты с выбором кол-ва гостей
   capacityAll.forEach((option) => {
     option.disabled = true;
   });
@@ -139,10 +133,8 @@ const setAddress = (({lat, lng}) => {
 });
 address.setAttribute('readonly', true);
 
-//Проверяем пустые поля всей формы
 formAd.addEventListener('invalid', setEmptyFieldErrorMessage, true);
 
-//Функция очистки формы
 const resetForm = (form) => {
   const formInputs = form.querySelectorAll('input');
   formInputs.forEach((input) => {
@@ -165,7 +157,6 @@ const resetForm = (form) => {
   capacity.value = 1;
 };
 
-//Функция сброса
 const reset = ((modal) => {
   modal;
   resetForm(formAd);
@@ -173,17 +164,15 @@ const reset = ((modal) => {
   resetMainMarker();
 });
 
-//Обработчик кнопки сброса
 formAd.addEventListener('reset', (evt) => {
   evt.preventDefault();
   reset();
 });
-//закрытие модальных окон
+
 errorButton.addEventListener('click', () => {
   closeModal(errorModal);
 });
 
-//Функция отправки данных на сервер по кнопке Опубликовать
 const sendUserFormData = (() => {
   formAd.addEventListener('submit', (evt) => {
     evt.preventDefault();
