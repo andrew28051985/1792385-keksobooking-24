@@ -1,7 +1,6 @@
 import {setAddress} from './form.js';
 import {createCustomPopup} from './card.js';
-import {featuresServer} from './map-filter.js';
-import {setFilterFormChange, housingFilter} from './map-filter.js';
+import {featuresFilter, setFilterFormChange, housingFilter} from './map-filter.js';
 
 const ADS_COUNT = 10;
 
@@ -88,7 +87,7 @@ const createMarker = ((point) => {
 //Функция создания меток объявлений
 const createAd = (ads) => {
   markerGroup.clearLayers();
-  const filteredAds = featuresServer(ads);
+  const filteredAds = featuresFilter(ads);
   const filteredAdsAll = housingFilter(filteredAds).slice(0, ADS_COUNT);
   filteredAdsAll.forEach((point) => {
     createMarker(point);

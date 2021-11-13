@@ -11,9 +11,24 @@ const formFilters = document.querySelector('.map__filters');
 const formTitle = formAd.querySelector('#title');
 const formPrice = formAd.querySelector('#price');
 const formType = formAd.querySelector('#type');
+const timeIn = formAd.querySelector('#timein');
+const timeOut = formAd.querySelector('#timeout');
+const roomNumber = formAd.querySelector('#room_number');
+const capacity = formAd.querySelector('#capacity');
+const address = formAd.querySelector('#address');
+const capacityAll = capacity.querySelectorAll('option');
+
 const successModal = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
 const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
 const errorButton = errorModal.querySelector('.error__button');
+
+const type = {
+  bungalow: {min: 0, placeholder: 0},
+  flat: {min: 1000, placeholder: 1000},
+  hotel: {min: 3000, placeholder: 3000},
+  house: {min: 5000, placeholder: 5000},
+  palace: {min: 10000, placeholder: 10000},
+};
 
 //Функция показа сообщения если поле пустое
 const setEmptyFieldErrorMessage = (evt) => {
@@ -37,14 +52,6 @@ formTitle.addEventListener('input', () => {
   }
   formTitle.reportValidity();
 });
-
-const type = {
-  bungalow: {min: 0, placeholder: 0},
-  flat: {min: 1000, placeholder: 1000},
-  hotel: {min: 3000, placeholder: 3000},
-  house: {min: 5000, placeholder: 5000},
-  palace: {min: 10000, placeholder: 10000},
-};
 
 const minPrice = () => {
   formPrice.placeholder = type[formType.value].placeholder;
@@ -75,9 +82,6 @@ formPrice.addEventListener('input', () => {
   formPrice.reportValidity();
 });
 
-const timeIn = formAd.querySelector('#timein');
-const timeOut = formAd.querySelector('#timeout');
-
 timeIn.addEventListener('input', () => {
   if (timeIn.value === '12:00') {
     timeOut.value = '12:00';
@@ -96,10 +100,6 @@ timeOut.addEventListener('input', () => {
     timeIn.value = '14:00';
   }
 });
-
-const roomNumber = formAd.querySelector('#room_number');
-const capacity = formAd.querySelector('#capacity');
-const capacityAll = capacity.querySelectorAll('option');
 
 //Выбор варианта для 1 гостя, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].selected = true;
@@ -134,7 +134,6 @@ roomNumber.addEventListener('input', () => {
   }
 });
 
-const address = formAd.querySelector('#address');
 const setAddress = (({lat, lng}) => {
   address.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 });
@@ -147,10 +146,10 @@ formAd.addEventListener('invalid', setEmptyFieldErrorMessage, true);
 const resetForm = (form) => {
   const formInputs = form.querySelectorAll('input');
   formInputs.forEach((input) => {
-    if (!input.type === 'checkbox') {
-      input.value = '';
-    } else {
+    if (input.type === 'checkbox') {
       input.checked = false;
+    } else {
+      input.value = '';
     }
   });
   const formTextArea = form.querySelectorAll('textarea');
@@ -196,4 +195,4 @@ const sendUserFormData = (() => {
   });
 });
 
-export {formFilters, sendUserFormData, setAddress};
+export {sendUserFormData, setAddress};
