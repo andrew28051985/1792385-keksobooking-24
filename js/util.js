@@ -1,6 +1,6 @@
 const ALERT_SHOW_TIME = 5000;
 
-const showAlert = (message) => {   //функция генерации сообщения об ошибке
+const showAlert = (message) => {
   const alertContainer = document.createElement('div');
   alertContainer.style.zIndex = 999;
   alertContainer.style.position = 'absolute';
@@ -17,12 +17,11 @@ const showAlert = (message) => {   //функция генерации сооб�
 
   document.body.append(alertContainer);
 
-  setTimeout(() => {        //Сделать через время
-    alertContainer.remove();  //удалить блок сообщения
-  }, ALERT_SHOW_TIME);        //через какое время удалить
+  setTimeout(() => {
+    alertContainer.remove();
+  }, ALERT_SHOW_TIME);
 };
 
-//Нажатие на клавишу ESC
 const isEscapeKey = (evt) => {
   if (evt.key === 'Escape') {
     return true;
@@ -30,10 +29,18 @@ const isEscapeKey = (evt) => {
   return false;
 };
 
-//Подсветка инпута формы, если ошибка ввода
 const borderFormError = (nameInput) => {
   nameInput.style.border = '2px solid #ff6547';
   nameInput.style.borderRadius = '4px';
 };
 
-export {showAlert, isEscapeKey, borderFormError};
+function debounce (callback, timeoutDelay = 500) {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+}
+
+export {showAlert, isEscapeKey, borderFormError, debounce};

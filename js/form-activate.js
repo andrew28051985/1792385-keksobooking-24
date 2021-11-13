@@ -40,7 +40,4 @@ const activateForm = (classAvtivate) => {
   });
 };
 
-disabledForm('.map__filters');
-disabledForm('.ad-form');
-
 export {activateForm, disabledForm};

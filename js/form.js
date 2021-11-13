@@ -1,4 +1,4 @@
-import {mainMarkerLatLng, resetMainMarker} from './map.js';
+import {resetMainMarker} from './map.js';
 import {openModal, closeModal} from './modal.js';
 import {borderFormError} from './util.js';
 import {sendData}  from './api.js';
@@ -11,11 +11,25 @@ const formFilters = document.querySelector('.map__filters');
 const formTitle = formAd.querySelector('#title');
 const formPrice = formAd.querySelector('#price');
 const formType = formAd.querySelector('#type');
+const timeIn = formAd.querySelector('#timein');
+const timeOut = formAd.querySelector('#timeout');
+const roomNumber = formAd.querySelector('#room_number');
+const capacity = formAd.querySelector('#capacity');
+const address = formAd.querySelector('#address');
+const capacityAll = capacity.querySelectorAll('option');
+
 const successModal = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
 const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
 const errorButton = errorModal.querySelector('.error__button');
 
-//Функция показа сообщения если поле пустое
+const type = {
+  bungalow: {min: 0, placeholder: 0},
+  flat: {min: 1000, placeholder: 1000},
+  hotel: {min: 3000, placeholder: 3000},
+  house: {min: 5000, placeholder: 5000},
+  palace: {min: 10000, placeholder: 10000},
+};
+
 const setEmptyFieldErrorMessage = (evt) => {
   const field = evt.target;
   if (field.validity.valueMissing) {
@@ -37,14 +51,6 @@ formTitle.addEventListener('input', () => {
   }
   formTitle.reportValidity();
 });
-
-const type = {
-  bungalow: {min: 0, placeholder: 0},
-  flat: {min: 1000, placeholder: 1000},
-  hotel: {min: 3000, placeholder: 3000},
-  house: {min: 5000, placeholder: 5000},
-  palace: {min: 10000, placeholder: 10000},
-};
 
 const minPrice = () => {
   formPrice.placeholder = type[formType.value].placeholder;
@@ -75,9 +81,6 @@ formPrice.addEventListener('input', () => {
   formPrice.reportValidity();
 });
 
-const timeIn = formAd.querySelector('#timein');
-const timeOut = formAd.querySelector('#timeout');
-
 timeIn.addEventListener('input', () => {
   if (timeIn.value === '12:00') {
     timeOut.value = '12:00';
@@ -97,21 +100,12 @@ timeOut.addEventListener('input', () => {
   }
 });
 
-const roomNumber = formAd.querySelector('#room_number');
-const capacity = formAd.querySelector('#capacity');
-const capacityAll = capacity.querySelectorAll('option');
-
-//Выбор варианта для 1 гостя, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].selected = true;
-//блокируем все варианты с выбором кол-ва гостей
 capacityAll.forEach((option) => {
   option.disabled = true;
 });
-//открываем вариант с 1 гостем, т.к. выбрана по умолчанию 1 комната
 capacityAll[2].disabled = false;
-//отслеживаем выбор кол-ва комнат
 roomNumber.addEventListener('input', () => {
-  //блокируем все варианты с выбором кол-ва гостей
   capacityAll.forEach((option) => {
     option.disabled = true;
   });
@@ -134,20 +128,21 @@ roomNumber.addEventListener('input', () => {
   }
 });
 
-const address = formAd.querySelector('#address');
-const adressValue = `${mainMarkerLatLng._latlng.lat}, ${mainMarkerLatLng._latlng.lng}`;
-address.value = adressValue;
+const setAddress = (({lat, lng}) => {
+  address.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+});
 address.setAttribute('readonly', true);
 
-//Проверяем пустые поля всей формы
 formAd.addEventListener('invalid', setEmptyFieldErrorMessage, true);
 
-//Функция очистки формы
 const resetForm = (form) => {
   const formInputs = form.querySelectorAll('input');
   formInputs.forEach((input) => {
-    input.value = '';
-    input.checked = false;
+    if (input.type === 'checkbox') {
+      input.checked = false;
+    } else {
+      input.value = '';
+    }
   });
   const formTextArea = form.querySelectorAll('textarea');
   formTextArea.forEach((textarea) => {
@@ -160,15 +155,8 @@ const resetForm = (form) => {
   });
   minPrice();
   capacity.value = 1;
-  address.value = adressValue;
 };
 
-//открытие модальных окон
-errorButton.addEventListener('click', () => {
-  closeModal(errorModal);
-});
-
-//Функция сброса
 const reset = ((modal) => {
   modal;
   resetForm(formAd);
@@ -176,13 +164,15 @@ const reset = ((modal) => {
   resetMainMarker();
 });
 
-//Обработчик кнопки сброса
 formAd.addEventListener('reset', (evt) => {
   evt.preventDefault();
   reset();
 });
 
-//Функция отправки данных на сервер по кнопке Опубликовать
+errorButton.addEventListener('click', () => {
+  closeModal(errorModal);
+});
+
 const sendUserFormData = (() => {
   formAd.addEventListener('submit', (evt) => {
     evt.preventDefault();
@@ -194,5 +184,4 @@ const sendUserFormData = (() => {
   });
 });
 
-
-export {address, sendUserFormData};
+export {sendUserFormData, setAddress};

@@ -1,22 +1,20 @@
-//Получение данных с сервера
 const getData = ((onSuccess, onFail) => {
-  fetch('https://24.javascript.pages.academy/keksobooking/data')  //адрес сервера
-    .then((response) => {             //проверяем полученные данные от сервера
-      if (response.ok) {              //если есть ошибки при загрузке данных
-        return response;              //если нет, то возвращаем данные
+  fetch('https://24.javascript.pages.academy/keksobooking/data')
+    .then((response) => {
+      if (response.ok) {
+        return response;
       }
-      throw new Error('Ошибка загрузки данных с сервера. Перезагрузите страницу.');  //иначеч показываем сообщение об ошибке
+      throw new Error('Ошибка загрузки данных с сервера. Перезагрузите страницу.');
     })
-    .then((response) => response.json())     // полученные данные преобразуем из JSON в объект
+    .then((response) => response.json())
     .then((ads) => {
-      onSuccess(ads);//.slice(0, ADS_COUNT));  //получив объект с данными отрисовываем на карте
+      onSuccess(ads);
     })
-    .catch((error) => {         //если есть ошибки в запросе, то показываем сообщение об ошибке
-      onFail(error);        //функция показа сообщения об ошибке
+    .catch((error) => {
+      onFail(error);
     });
 });
 
-//Отправка данных на сервер
 const sendData = ((body, onSuccess, onFail) => {
   fetch(
     'https://24.javascript.pages.academy/keksobooking',
