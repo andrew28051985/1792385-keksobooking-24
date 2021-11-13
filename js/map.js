@@ -1,7 +1,9 @@
 import {setAddress} from './form.js';
 import {createCustomPopup} from './card.js';
 import {featuresServer} from './map-filter.js';
-import {setFilterFormChange, housingFilter/*compareRankAds*/} from './map-filter.js';
+import {setFilterFormChange, housingFilter} from './map-filter.js';
+
+const ADS_COUNT = 10;
 
 //Создаем карту
 const map = L.map('map-canvas', {
@@ -24,7 +26,7 @@ const initMap = async () => {
       lng: 139.69528,
     },
     //Устанавливаем масштаб карты
-    13);
+    12);
 };
 //Добавляем на карту саму карту от www.openstreetmap.org
 L.tileLayer(
@@ -87,13 +89,10 @@ const createMarker = ((point) => {
 const createAd = (ads) => {
   markerGroup.clearLayers();
   const filteredAds = featuresServer(ads);
-  const filteredAdsAll = housingFilter(filteredAds).slice(0, 10);//sort(compareRankAds).slice(0, 10);
-
+  const filteredAdsAll = housingFilter(filteredAds).slice(0, ADS_COUNT);
   filteredAdsAll.forEach((point) => {
     createMarker(point);
-    console.log(point.offer.type+'-'+point.offer.price+'-'+point.offer.rooms+'-'+point.offer.guests);
   });
-  console.log('++++++++');
 };
 //Массив для копирования данных с сервера
 let allAdsData = [];
@@ -112,7 +111,7 @@ const resetMainMarker = (() => {
   map.setView({
     lat: 35.67278,
     lng: 139.69528,
-  }, 13);
+  }, 12);
   setAddress(
     {
       lat: 35.68965,

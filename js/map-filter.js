@@ -1,9 +1,30 @@
 import {debounce} from './util.js';
 
-//const ADS_COUNT = 10;
 const mapFilters = document.querySelector('.map__filters');
 const mapFeatures = mapFilters.querySelector('.map__features');
 const features = mapFeatures.querySelectorAll('input');
+const type = mapFilters.querySelector('#housing-type');
+const price = mapFilters.querySelector('#housing-price');
+const rooms = mapFilters.querySelector('#housing-rooms');
+const guests = mapFilters.querySelector('#housing-guests');
+const rankRpice = {
+  any: {
+    min: 0,
+    max: 1000000,
+  },
+  low: {
+    min: 0,
+    max: 10000,
+  },
+  middle: {
+    min: 10000,
+    max: 50000,
+  },
+  high: {
+    min: 50000,
+    max: 1000000,
+  },
+};
 
 const isChecked = (value) => {
   const condition = value.checked;
@@ -14,20 +35,26 @@ const featuresServer = ((ads) => {
   const selectFeature = [...features].filter(isChecked);
   const feturesServerOnFilter = ads.slice().filter((ad) => selectFeature.every((feature) =>
     ad.offer.features && ad.offer.features.includes(feature.value)));
-  //const feturesServerOnFilterTen = feturesServerOnFilter.slice(0, ADS_COUNT);
   return feturesServerOnFilter;
 });
-
+//Фильтрация по полям housing
 const housingFilter = ((ads) => {
-  const type = mapFilters.querySelector('#housing-type');
-  const price = mapFilters.querySelector('#housing-price');
+  const filterValue = {
+    type: type.value,
+    price: price.value,
+    rooms: Number(rooms.value) || rooms.value,
+    guests: Number(guests.value) || guests.value,
+  };
+  const filterValueKeys = Object.keys(filterValue);
 
-  const housingFilterAll = ads.slice().filter((ad) => {
-    if (ad.offer.type === type.value || type.value === 'any') {
-      return true;
+  const housingFilterAll = ads.slice().filter((ad) => filterValueKeys.every((key) => {
+    if (key === 'price') {
+      if (ad.offer[key] > rankRpice[filterValue[key]].min && ad.offer.price <= rankRpice[filterValue[key]].max) {
+        return true;
+      }
     }
-    return false;
-  });
+    return ad.offer[key] === filterValue[key] || filterValue[key] === 'any';
+  }));
   return housingFilterAll;
 });
 
@@ -40,24 +67,7 @@ const getRankFilter = ((ad) => {
   const guests = mapFilters.querySelector('#housing-guests');
 
   let rank = 0;
-  const rankRpice = {
-    any: {
-      min: 0,
-      max: 1000000,
-    },
-    low: {
-      min: 0,
-      max: 10000,
-    },
-    middle: {
-      min: 10000,
-      max: 50000,
-    },
-    high: {
-      min: 50000,
-      max: 1000000,
-    },
-  };
+
   if (ad.offer.type === type.value) {
     rank += 4;
   } if (ad.offer.price >= rankRpice[price.value].min && ad.offer.price <= rankRpice[price.value].max) {
