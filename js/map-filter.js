@@ -1,5 +1,7 @@
 import {debounce} from './util.js';
 
+const ADS_COUNT = 10;
+
 const mapFilters = document.querySelector('.map__filters');
 const mapFeatures = mapFilters.querySelector('.map__features');
 const features = mapFeatures.querySelectorAll('input');
@@ -62,8 +64,28 @@ const housingFilter = ((ads) => {
   return housingFilterAll;
 });
 
+const filterAds = (ads) => {
+  const filterAdsFeature = featuresFilter(ads);
+  const filterAdsAll = housingFilter(filterAdsFeature);
+  return filterAdsAll;
+};
+
+const limitArray = (ads) => {
+  const arrayAds = filterAds(ads);
+  const limitAds = [];
+
+  arrayAds.some((ad) => {
+    if (limitAds.length < ADS_COUNT) {
+      limitAds.push(ad);
+    } else {
+      return true;
+    }
+  });
+  return limitAds;
+};
+
 const setFilterFormChange = (cb) => {
   mapFilters.addEventListener('change', debounce(cb));
 };
 
-export {featuresFilter, setFilterFormChange, housingFilter};
+export {setFilterFormChange, limitArray};

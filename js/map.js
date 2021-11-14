@@ -1,8 +1,6 @@
 import {setAddress} from './form.js';
 import {createCustomPopup} from './card.js';
-import {featuresFilter, setFilterFormChange, housingFilter} from './map-filter.js';
-
-const ADS_COUNT = 10;
+import {setFilterFormChange, limitArray} from './map-filter.js';
 
 const map = L.map('map-canvas', {
   zoomControl: true,
@@ -78,9 +76,8 @@ const createMarker = ((point) => {
 
 const createAd = (ads) => {
   markerGroup.clearLayers();
-  const filteredAds = featuresFilter(ads);
-  const filteredAdsAll = housingFilter(filteredAds).slice(0, ADS_COUNT);
-  filteredAdsAll.forEach((point) => {
+  const filteredAdsAllMap = limitArray(ads);
+  filteredAdsAllMap.forEach((point) => {
     createMarker(point);
   });
 };
