@@ -2,6 +2,7 @@ import {resetMainMarker} from './map.js';
 import {openModal, closeModal} from './modal.js';
 import {borderFormError} from './util.js';
 import {sendData}  from './api.js';
+import {previewAvatar, clear} from './foto.js';
 
 const MIN_LENGTH_TITLE = 30;
 const MAX_LENGTH_TITLE = 100;
@@ -155,6 +156,8 @@ const resetForm = (form) => {
   });
   minPrice();
   capacity.value = 1;
+  previewAvatar.src = 'img/muffin-grey.svg';
+  clear();
 };
 
 const reset = ((modal) => {

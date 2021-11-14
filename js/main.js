@@ -3,6 +3,7 @@ import {showAlert} from './util.js';
 import {sendUserFormData} from './form.js';
 import {initMap, createAd, saveAdsData} from'./map.js';
 import {getData} from './api.js';
+import './foto.js';
 
 disabledForm('.map__filters');
 disabledForm('.ad-form');
