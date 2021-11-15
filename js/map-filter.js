@@ -34,9 +34,9 @@ const isChecked = (value) => {
   return condition;
 };
 
-const featuresFilter = ((ads) => {
+const setFeaturesFilter = ((ads) => {
   const selectFeature = [...features].filter(isChecked);
-  const feturesServerOnFilter = ads.slice().filter((ad) => selectFeature.every((feature) => {
+  const feturesServerOnFilter = ads.filter((ad) => selectFeature.every((feature) => {
     if (ad.offer.features && ad.offer.features.includes(feature.value)) {
       return true;
     }
@@ -45,7 +45,7 @@ const featuresFilter = ((ads) => {
   return feturesServerOnFilter;
 });
 
-const housingFilter = ((ads) => {
+const setHousingFilter = ((ads) => {
   const filterValue = {
     type: type.value,
     price: price.value,
@@ -53,7 +53,7 @@ const housingFilter = ((ads) => {
     guests: Number(guests.value) || guests.value,
   };
   const filterValueKeys = Object.keys(filterValue);
-  const housingFilterAll = ads.slice().filter((ad) => filterValueKeys.every((key) => {
+  const setHousingFilterAll = ads.filter((ad) => filterValueKeys.every((key) => {
     if (key === 'price') {
       if (ad.offer[key] > rankRpice[filterValue[key]].min && ad.offer.price <= rankRpice[filterValue[key]].max) {
         return true;
@@ -61,12 +61,12 @@ const housingFilter = ((ads) => {
     }
     return ad.offer[key] === filterValue[key] || filterValue[key] === 'any';
   }));
-  return housingFilterAll;
+  return setHousingFilterAll;
 });
 
 const filterAds = (ads) => {
-  const filterAdsFeature = featuresFilter(ads);
-  const filterAdsAll = housingFilter(filterAdsFeature);
+  const filterAdsFeature = setFeaturesFilter(ads);
+  const filterAdsAll = setHousingFilter(filterAdsFeature);
   return filterAdsAll;
 };
 

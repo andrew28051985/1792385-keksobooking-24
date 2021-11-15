@@ -1,8 +1,8 @@
 import {resetMainMarker} from './map.js';
-import {openModal, closeModal} from './modal.js';
-import {borderFormError} from './util.js';
+import {errorModal, openSuccessModal, openErrorModal, closeModal} from './modal.js';
+import {setBorderFormError} from './util.js';
 import {sendData}  from './api.js';
-import {previewAvatar, clear} from './foto.js';
+import {clearPhoto} from './photo.js';
 
 const MIN_LENGTH_TITLE = 30;
 const MAX_LENGTH_TITLE = 100;
@@ -18,9 +18,6 @@ const roomNumber = formAd.querySelector('#room_number');
 const capacity = formAd.querySelector('#capacity');
 const address = formAd.querySelector('#address');
 const capacityAll = capacity.querySelectorAll('option');
-
-const successModal = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
-const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
 const errorButton = errorModal.querySelector('.error__button');
 
 const type = {
@@ -31,11 +28,11 @@ const type = {
   palace: {min: 10000, placeholder: 10000},
 };
 
-const setEmptyFieldErrorMessage = (evt) => {
+const onInputValueMissing = (evt) => {
   const field = evt.target;
   if (field.validity.valueMissing) {
     field.setCustomValidity('Заполните обязательное поле.');
-    borderFormError(field);
+    setBorderFormError(field);
   }
 };
 
@@ -43,38 +40,38 @@ formTitle.addEventListener('input', () => {
   const lengthTitle = formTitle.value.length;
   if (lengthTitle < MIN_LENGTH_TITLE) {
     formTitle.setCustomValidity(`Еще нужно ввести ${MIN_LENGTH_TITLE - lengthTitle} симв.`);
-    borderFormError(formTitle);
+    setBorderFormError(formTitle);
   } else if (lengthTitle > MAX_LENGTH_TITLE) {
     formTitle.setCustomValidity(`Нужно удалить ${lengthTitle - MAX_LENGTH_TITLE} симв.`);
-    borderFormError(formTitle);
+    setBorderFormError(formTitle);
   } else {
     formTitle.setCustomValidity('');
   }
   formTitle.reportValidity();
 });
 
-const minPrice = () => {
+const setMinPrice = () => {
   formPrice.placeholder = type[formType.value].placeholder;
   formPrice.min = type[formType.value].min;
   return type[formType.value].min;
 };
 
-minPrice();
+setMinPrice();
 formType.addEventListener('input', () => {
-  minPrice();
+  setMinPrice();
   formPrice.reportValidity();
 });
 
 formPrice.addEventListener('input', () => {
-  const MIN_PRICE = minPrice();
+  const MIN_PRICE = setMinPrice();
   const lengthPrice = formPrice.value;
 
   if (lengthPrice < MIN_PRICE) {
     formPrice.setCustomValidity(`Укажите цену выше на ${MIN_PRICE - lengthPrice}руб.`);
-    borderFormError(formPrice);
+    setBorderFormError(formPrice);
   } else if (lengthPrice > MAX_PRICE) {
     formPrice.setCustomValidity(`Укажите цену ниже на ${lengthPrice - MAX_PRICE} руб.`);
-    borderFormError(formPrice);
+    setBorderFormError(formPrice);
   } else {
     formPrice.setCustomValidity('');
   }
@@ -82,23 +79,11 @@ formPrice.addEventListener('input', () => {
   formPrice.reportValidity();
 });
 
-timeIn.addEventListener('input', () => {
-  if (timeIn.value === '12:00') {
-    timeOut.value = '12:00';
-  } else if (timeIn.value === '13:00') {
-    timeOut.value = '13:00';
-  } else if (timeIn.value === '14:00') {
-    timeOut.value = '14:00';
-  }
+timeIn.addEventListener('input', (evt) => {
+  timeOut.value = evt.target.value;
 });
-timeOut.addEventListener('input', () => {
-  if (timeOut.value === '12:00') {
-    timeIn.value = '12:00';
-  } else if (timeOut.value === '13:00') {
-    timeIn.value = '13:00';
-  } else if (timeOut.value === '14:00') {
-    timeIn.value = '14:00';
-  }
+timeOut.addEventListener('input', (evt) => {
+  timeIn.value = evt.target.value;
 });
 
 capacityAll[2].selected = true;
@@ -132,9 +117,9 @@ roomNumber.addEventListener('input', () => {
 const setAddress = (({lat, lng}) => {
   address.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 });
-address.setAttribute('readonly', true);
+address.readOnly = 'true';
 
-formAd.addEventListener('invalid', setEmptyFieldErrorMessage, true);
+formAd.addEventListener('invalid', onInputValueMissing, true);
 
 const resetForm = (form) => {
   const formInputs = form.querySelectorAll('input');
@@ -154,10 +139,8 @@ const resetForm = (form) => {
     const formSelectSelected = select.querySelector('[selected]');
     formSelectSelected.selected = true;
   });
-  minPrice();
+  setMinPrice();
   capacity.value = 1;
-  previewAvatar.src = 'img/muffin-grey.svg';
-  clear();
 };
 
 const reset = ((modal) => {
@@ -165,6 +148,7 @@ const reset = ((modal) => {
   resetForm(formAd);
   resetForm(formFilters);
   resetMainMarker();
+  clearPhoto();
 });
 
 formAd.addEventListener('reset', (evt) => {
@@ -173,7 +157,7 @@ formAd.addEventListener('reset', (evt) => {
 });
 
 errorButton.addEventListener('click', () => {
-  closeModal(errorModal);
+  closeModal();
 });
 
 const sendUserFormData = (() => {
@@ -181,8 +165,8 @@ const sendUserFormData = (() => {
     evt.preventDefault();
     sendData(
       new FormData(evt.target),
-      () => reset(openModal(successModal)),
-      () => openModal(errorModal),
+      () => reset(openSuccessModal()),
+      () => openErrorModal(),
     );
   });
 });

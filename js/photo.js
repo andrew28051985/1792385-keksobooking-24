@@ -1,4 +1,6 @@
 const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+const PHOTO_WHIDTH = '40';
+const PHOTO_HEIGHT = '40';
 
 const fileChooserAvatar = document.querySelector('.ad-form__field input[type=file');
 const fileChooserPhoto = document.querySelector('.ad-form__upload input[type=file]');
@@ -6,31 +8,35 @@ const previewAvatar = document.querySelector('.ad-form-header__preview img');
 const previewPhoto = document.querySelector('.ad-form__photo');
 const formPhotoContainer = document.querySelector('.ad-form__photo-container');
 
+const blockPositionCenter = (block) => {
+  block.style.display = 'flex';
+  block.style.justifyContent = 'center';
+  block.style.alignItems = 'center';
+};
+
 const createContainerPhoto = (container) => {
   const blockDiv = document.createElement('div');
-  blockDiv.style.display = 'flex';
-  blockDiv.style.justifyContent = 'center';
-  blockDiv.style.alignItems = 'center';
+  blockPositionCenter(blockDiv);
   blockDiv.classList.add('ad-form__photo');
-
   container.append(blockDiv);
   return blockDiv;
 };
 
 const createPhoto = (container) => {
   const photo = document.createElement('img');
-  photo.width = '40';
-  photo.height = '40';
+  photo.width = PHOTO_WHIDTH;
+  photo.height = PHOTO_HEIGHT;
   container.append(photo);
   return photo;
 };
 
-const clear = () => {
+const clearPhoto = () => {
+  previewAvatar.src = 'img/muffin-grey.svg';
   previewPhoto.style = '';
   previewPhoto.textContent = '';
   const collects = formPhotoContainer.querySelectorAll('.ad-form__photo');
-  for (let i = 0; i < collects.length; i++) {
-    if (i > 0) {
+  for (let i = 1; i < collects.length; i++) {
+    if (i >= 1) {
       collects[i].remove();
     }
   }
@@ -56,12 +62,12 @@ fileChooserPhoto.addEventListener('change', () => {
     const endsNamePhoto = filePhotoName.endsWith(it);
     return endsNamePhoto;
   });
+
   const containerPhoto = document.querySelector('.ad-form__photo img');
+
   if (similar) {
     if (containerPhoto === null) {
-      previewPhoto.style.display = 'flex';
-      previewPhoto.style.justifyContent = 'center';
-      previewPhoto.style.alignItems = 'center';
+      blockPositionCenter(previewPhoto);
       const photo = createPhoto(previewPhoto);
       photo.src = URL.createObjectURL(filePhoto);
     } else {
@@ -72,4 +78,4 @@ fileChooserPhoto.addEventListener('change', () => {
   }
 });
 
-export {previewAvatar, clear};
+export {clearPhoto};

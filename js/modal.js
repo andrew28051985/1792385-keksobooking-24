@@ -1,22 +1,30 @@
-import {isEscapeKey} from './util.js';
+import {onModalEscKeydown} from './util.js';
 
-const closeModal = (nameModal) => {
-  nameModal.remove();
+const successModal = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
+const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
 
-  document.removeEventListener('keydown', (evt) => {
-    isEscapeKey(evt) ? closeModal(nameModal) : false;
-  });
+const closeModal = () => {
+  successModal.remove();
+  errorModal.remove();
+
+  document.removeEventListener('keydown', onModalEscKeydown);
+  successModal.removeEventListener('click', closeModal);
+  errorModal.removeEventListener('click', closeModal);
 };
 
-const openModal = (nameModal) => {
-  document.body.append(nameModal);
 
-  document.addEventListener('keydown', (evt) => {
-    isEscapeKey(evt) ? closeModal(nameModal) : false;
-  });
-  nameModal.addEventListener('click', () => {
-    closeModal(nameModal);
-  });
+const openSuccessModal = () => {
+  document.body.append(successModal);
+
+  document.addEventListener('keydown', onModalEscKeydown);
+  successModal.addEventListener('click', closeModal);
 };
 
-export {openModal, closeModal};
+const openErrorModal = () => {
+  document.body.append(errorModal);
+
+  document.addEventListener('keydown', onModalEscKeydown);
+  errorModal.addEventListener('click', closeModal);
+};
+
+export {errorModal, openSuccessModal, openErrorModal, closeModal};

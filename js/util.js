@@ -1,12 +1,14 @@
+import {closeModal} from './modal.js';
+
 const ALERT_SHOW_TIME = 5000;
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
-  alertContainer.style.zIndex = 999;
+  alertContainer.style.zIndex = '999';
   alertContainer.style.position = 'absolute';
-  alertContainer.style.left = 0;
+  alertContainer.style.left = '0';
   alertContainer.style.top = '50vh';
-  alertContainer.style.right = 0;
+  alertContainer.style.right = '0';
   alertContainer.style.padding = '10px 3px';
   alertContainer.style.fontSize = '30px';
   alertContainer.style.textAlign = 'center';
@@ -22,14 +24,14 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-const isEscapeKey = (evt) => {
-  if (evt.key === 'Escape') {
-    return true;
-  }
-  return false;
+const isEscapeKey = (evt) =>
+  evt.key === 'Escape';
+
+const onModalEscKeydown = (evt) => {
+  isEscapeKey(evt) ? closeModal() : false;
 };
 
-const borderFormError = (nameInput) => {
+const setBorderFormError = (nameInput) => {
   nameInput.style.border = '2px solid #ff6547';
   nameInput.style.borderRadius = '4px';
 };
@@ -43,4 +45,4 @@ function debounce (callback, timeoutDelay = 500) {
   };
 }
 
-export {showAlert, isEscapeKey, borderFormError, debounce};
+export {showAlert, isEscapeKey, onModalEscKeydown, setBorderFormError, debounce};
